@@ -301,7 +301,7 @@
         <div class="lg:col-span-5">
           <div class="relative mx-auto max-w-md">
             <div class="glass-card p-3 sm:p-4 rounded-3xl relative z-10">
-              <img id="hero-image-el" src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=900&q=80" alt="Preview Undangan NGULEMIN" class="w-full aspect-square object-cover rounded-2xl shadow-inner" />
+              <img id="hero-image-el" src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=900&q=80" loading="lazy" alt="Preview Undangan NGULEMIN" class="w-full aspect-square object-cover rounded-2xl shadow-inner" />
               <div class="mt-4 flex items-center justify-between px-2">
                 <div>
                   <span class="text-xs uppercase tracking-widest text-gold-dark font-semibold">Koleksi Eksklusif</span>
@@ -326,7 +326,7 @@
           <p class="text-sm sm:text-base text-charcoal/70 mt-3">Pilih desain undangan impian Anda. Klik tombol <b>Preview</b> untuk melihat demo langsung di tab baru atau klik <b>Pesan</b> untuk memesan tema pilihan Anda.</p>
         </div>
 
-        <!-- Bar Pencarian, Dropdown Kategori & Dropdown Terlaris/Terbaru -->
+        <!-- Bar Pencarian, Dropdown Kategori & Dropdown Filter Urutan -->
         <div class="max-w-4xl mx-auto mb-10 glass-card p-3 sm:p-4 rounded-2xl grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
           <div class="relative sm:col-span-5">
             <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gold-dark text-sm"></i>
@@ -356,8 +356,9 @@
               onchange="window.app.handlePublicThemeSort(this.value)"
               class="w-full pl-9 pr-9 py-3 rounded-xl border border-gold/35 bg-white text-xs sm:text-sm font-semibold text-charcoal appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-gold"
             >
-              <option value="terbaru">Terbaru</option>
+              <option value="urutan_tabel">Urutan Katalog</option>
               <option value="terlaris">Terlaris</option>
+              <option value="terbaru">Terbaru</option>
             </select>
             <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gold-dark text-xs pointer-events-none"></i>
           </div>
@@ -576,12 +577,12 @@
       </div>
 
       <div class="p-3.5 rounded-2xl bg-pearl/70 border border-gold/25 text-[11px] text-charcoal/70">
-        <p class="font-bold text-charcoal mb-0.5"><i class="fa-solid fa-shield-halved text-gold-dark mr-1"></i> Sesi Terenkripsi</p>
-        <p id="sidebar-admin-email" class="truncate text-charcoal/80 font-medium">Admin Utama</p>
+        <p class="font-bold text-charcoal mb-0.5"><i class="fa-solid fa-cloud-arrow-up text-gold-dark mr-1"></i> Supabase Storage Aktif</p>
+        <p id="sidebar-admin-email" class="truncate text-charcoal/80 font-medium">Auto-Compress WebP</p>
       </div>
     </aside>
 
-    <!-- MAIN CONTENT AREA (DENGAN NAMA MENU AKTIF DI ATAS KONTEN UNTUK SEMUA DEVICE) -->
+    <!-- MAIN CONTENT AREA -->
     <main class="dashboard-main flex-1 p-4 sm:p-8">
       <div class="glass-card rounded-3xl p-5 sm:p-6 mb-6 flex items-center justify-between gap-4 border-l-4 border-l-gold">
         <div class="flex items-center gap-3.5">
@@ -658,7 +659,6 @@
           </div>
         </div>
 
-        <!-- Kolom Tanggal Akad Nikah & Tanggal Resepsi Pernikahan -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-semibold uppercase tracking-wider text-charcoal/80 mb-1">Tanggal Akad Nikah *</label>
@@ -675,7 +675,6 @@
           <textarea id="order-notes" rows="2" placeholder="Request nuansa warna, lagu latar, atau adat tertentu..." class="w-full px-3.5 py-2 rounded-xl border border-gold/40 bg-white"></textarea>
         </div>
 
-        <!-- Info Pengiriman Foto & Detail Lainnya via Chat WhatsApp Admin -->
         <div class="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-start gap-3 text-xs text-emerald-900 leading-relaxed">
           <i class="fa-brands fa-whatsapp text-emerald-600 text-lg mt-0.5 shrink-0"></i>
           <div>
@@ -803,16 +802,17 @@
 </div>
 
 <!-- ========================================================= -->
-<!-- MAIN APPLICATION MODULE (SUPABASE PRODUCTION READY)       -->
+<!-- MAIN APPLICATION MODULE (SUPABASE STORAGE + AUTO COMPRESS)-->
 <!-- ========================================================= -->
 <script type="module">
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
   // KONFIGURASI APLIKASI PRODUKSI
-  const IS_PREVIEW = false; // Sudah diset false untuk Deployment Produksi
+  const IS_PREVIEW = false; // Set false untuk Deployment Produksi
   // PASTE SUPABASE URL & ANON KEY ANDA DI SINI
   const SUPABASE_URL = "https://xocesarpktpfsznyoivz.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_8E0894hvH_S7OHK-0XxeCA_mDIVvV73";
+  const STORAGE_BUCKET = "ngulemin-media"; // Nama Bucket Penyimpanan Supabase Storage
 
   let supabase = null;
   if (!IS_PREVIEW && SUPABASE_URL.startsWith('http')) {
@@ -833,7 +833,7 @@
     }
   };
 
-  // DATA KONTEN AWAL LANDING PAGE (TANPA KREDENSIAL LOGIN DEFAULT & TANPA PESANAN DUMMY DI PRODUKSI)
+  // DATA KONTEN AWAL LANDING PAGE (DENGAN SORT_ORDER TERKUNCI)
   const INITIAL_CONTENT_DATA = {
     site_settings: {
       id: 'settings-1',
@@ -877,6 +877,7 @@
         image_url: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=700&q=80',
         preview_url: 'https://example.com/demo/royal-javanese',
         is_popular: true,
+        sort_order: 1,
         created_at: '2026-01-10T08:00:00.000Z'
       },
       {
@@ -886,6 +887,7 @@
         image_url: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=700&q=80',
         preview_url: 'https://example.com/demo/champagne-gold',
         is_popular: true,
+        sort_order: 2,
         created_at: '2026-02-14T08:00:00.000Z'
       },
       {
@@ -895,6 +897,7 @@
         image_url: 'https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=700&q=80',
         preview_url: 'https://example.com/demo/white-botanical',
         is_popular: false,
+        sort_order: 3,
         created_at: '2026-03-05T08:00:00.000Z'
       },
       {
@@ -904,6 +907,7 @@
         image_url: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=700&q=80',
         preview_url: 'https://example.com/demo/blush-rose',
         is_popular: true,
+        sort_order: 4,
         created_at: '2026-04-12T08:00:00.000Z'
       },
       {
@@ -913,6 +917,7 @@
         image_url: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=700&q=80',
         preview_url: 'https://example.com/demo/emerald-islamic',
         is_popular: false,
+        sort_order: 5,
         created_at: '2026-05-19T08:00:00.000Z'
       },
       {
@@ -922,6 +927,7 @@
         image_url: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=700&q=80',
         preview_url: 'https://example.com/demo/sundanese-prestige',
         is_popular: false,
+        sort_order: 6,
         created_at: '2026-06-25T08:00:00.000Z'
       }
     ],
@@ -994,13 +1000,13 @@
       id: 'home',
       icon: 'fa-house',
       label: 'Home',
-      desc: 'Atur konten utama Hero Banner, upload gambar Hero, serta statistik Pasangan Bahagia, Tema Premium & Kepuasan Pelanggan.'
+      desc: 'Atur konten utama Hero Banner, upload gambar Hero ke Supabase Storage, serta statistik kepercayaan.'
     },
     {
       id: 'themes',
       icon: 'fa-palette',
       label: 'Tema',
-      desc: 'Kelola katalog tema undangan pernikahan, upload gambar tema (1:1), live preview, serta import CSV.'
+      desc: 'Kelola katalog tema, urutan tampil tema, upload gambar otomatis terkompres ke Supabase Storage, & import CSV.'
     },
     {
       id: 'categories',
@@ -1024,7 +1030,7 @@
       id: 'system',
       icon: 'fa-sliders',
       label: 'Pengaturan Sistem',
-      desc: 'Unggah file logo website, kelola Media Sosial Footer, atur identitas brand, serta ubah Email & Password Admin via Supabase Auth.'
+      desc: 'Unggah file logo ke Supabase Storage, kelola Media Sosial Footer, atur identitas brand, & kredensial Admin.'
     }
   ];
 
@@ -1033,7 +1039,7 @@
     currentView: 'landing', // 'landing' | 'dashboard'
     activeCategory: 'Semua',
     publicThemeSearch: '',
-    publicThemeSort: 'terbaru', // 'terbaru' | 'terlaris'
+    publicThemeSort: 'urutan_tabel', // Default mengikuti urutan Tabel Daftar Katalog Tema di Dashboard
     currentUser: null,
     activeDashTab: 'orders',
     adminOrderSearch: '',
@@ -1044,9 +1050,153 @@
     db: JSON.parse(JSON.stringify(INITIAL_CONTENT_DATA))
   };
 
-  // FORMAT RUPIAH
-  const formatIDR = (num) => {
-    return 'Rp ' + Number(num || 0).toLocaleString('id-ID');
+  // FORMAT RUPIAH & UKURAN FILE
+  const formatIDR = (num) => 'Rp ' + Number(num || 0).toLocaleString('id-ID');
+  const formatBytes = (bytes) => {
+    if (!bytes || bytes === 0) return '0 KB';
+    const kb = bytes / 1024;
+    return kb >= 1024 ? (kb / 1024).toFixed(2) + ' MB' : Math.round(kb) + ' KB';
+  };
+
+  // HELPER PENGURUTAN TEMA KONSISTEN BERDASARKAN SORT_ORDER TABEL DASHBOARD
+  const sortThemesByTableOrder = (themesArray) => {
+    return [...themesArray].sort((a, b) => {
+      const orderA = typeof a.sort_order === 'number' ? a.sort_order : 999999;
+      const orderB = typeof b.sort_order === 'number' ? b.sort_order : 999999;
+      if (orderA !== orderB) return orderA - orderB;
+      return String(a.id).localeCompare(String(b.id));
+    });
+  };
+
+  const normalizeThemesSortOrder = () => {
+    const sorted = sortThemesByTableOrder(state.db.themes);
+    sorted.forEach((t, idx) => {
+      t.sort_order = idx + 1;
+    });
+    state.db.themes = sorted;
+  };
+
+  // =========================================================================
+  // ENGINE AUTO-COMPRESS GAMBAR JERNIH (WEBP) & UPLOAD KE SUPABASE STORAGE
+  // =========================================================================
+  const compressImageFile = (file, { maxWidth = 1080, maxHeight = 1080, quality = 0.86, forceSquare = false } = {}) => {
+    return new Promise((resolve, reject) => {
+      // Jika file SVG, tidak perlu digambar ke canvas agar vektor tetap tajam
+      if (file.type === 'image/svg+xml') {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve({ blob: file, dataUrl: e.target.result, ext: 'svg', contentType: 'image/svg+xml' });
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+        return;
+      }
+
+      const img = new Image();
+      const objectUrl = URL.createObjectURL(file);
+
+      img.onload = () => {
+        URL.revokeObjectURL(objectUrl);
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        let sx = 0, sy = 0, sWidth = img.width, sHeight = img.height;
+        let targetWidth = img.width;
+        let targetHeight = img.height;
+
+        if (forceSquare) {
+          // Center Crop 1:1 Presisi
+          const minSide = Math.min(img.width, img.height);
+          sx = (img.width - minSide) / 2;
+          sy = (img.height - minSide) / 2;
+          sWidth = minSide;
+          sHeight = minSide;
+          const outSide = Math.min(minSide, maxWidth);
+          targetWidth = outSide;
+          targetHeight = outSide;
+        } else {
+          // Pertahankan rasio asli dengan batas dimensi maksimum
+          if (targetWidth > maxWidth || targetHeight > maxHeight) {
+            const ratio = Math.min(maxWidth / targetWidth, maxHeight / targetHeight);
+            targetWidth = Math.round(targetWidth * ratio);
+            targetHeight = Math.round(targetHeight * ratio);
+          }
+        }
+
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, targetWidth, targetHeight);
+
+        const dataUrl = canvas.toDataURL('image/webp', quality);
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              reject(new Error('Gagal mengompres gambar'));
+              return;
+            }
+            resolve({
+              blob,
+              dataUrl,
+              ext: 'webp',
+              contentType: 'image/webp'
+            });
+          },
+          'image/webp',
+          quality
+        );
+      };
+
+      img.onerror = (err) => {
+        URL.revokeObjectURL(objectUrl);
+        reject(err);
+      };
+
+      img.src = objectUrl;
+    });
+  };
+
+  const uploadCompressedImageToSupabase = async (file, folderName, compressOptions) => {
+    const originalSize = file.size;
+    showToast(`Mengompres gambar (${formatBytes(originalSize)})...`);
+
+    const compressed = await compressImageFile(file, compressOptions);
+    const compressedSize = compressed.blob.size;
+
+    // Jika Supabase aktif, unggah langsung ke Supabase Storage Bucket
+    if (!IS_PREVIEW && supabase) {
+      const safeName = (file.name || 'image')
+        .replace(/\.[^/.]+$/, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '-')
+        .slice(0, 32);
+      const filePath = `${folderName}/${Date.now()}-${safeName}.${compressed.ext}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from(STORAGE_BUCKET)
+        .upload(filePath, compressed.blob, {
+          contentType: compressed.contentType,
+          cacheControl: '31536000',
+          upsert: true
+        });
+
+      if (uploadError) {
+        showToast(`Gagal unggah ke Storage (${uploadError.message}). Menggunakan file terkompres lokal.`, 'error');
+        return compressed.dataUrl;
+      }
+
+      const { data: publicUrlData } = supabase.storage
+        .from(STORAGE_BUCKET)
+        .getPublicUrl(filePath);
+
+      if (publicUrlData?.publicUrl) {
+        showToast(`Berhasil diunggah ke Supabase Storage! (${formatBytes(originalSize)} → ${formatBytes(compressedSize)})`);
+        return publicUrlData.publicUrl;
+      }
+    }
+
+    showToast(`Gambar berhasil dikompres (${formatBytes(originalSize)} → ${formatBytes(compressedSize)})!`);
+    return compressed.dataUrl;
   };
 
   // GENERATOR KODE PEMESANAN BERURUTAN OTOMATIS (NGU00001, NGU00002, dst.)
@@ -1074,13 +1224,13 @@
     el.className = `${bgClass} px-4 py-3 rounded-2xl shadow-xl text-xs font-semibold flex items-center gap-2.5 transition-all duration-300 pointer-events-auto`;
     el.innerHTML = `<i class="fa-solid ${type === 'error' ? 'fa-circle-exclamation' : 'fa-circle-check'}"></i><span>${msg}</span>`;
     container.appendChild(el);
-    setTimeout(() => el.remove(), 3500);
+    setTimeout(() => el.remove(), 3800);
   };
 
   // AUTO SETUP DATABASE & CEK SESI LOGIN SUPABASE AUTH
   async function autoSetupDatabase() {
     if (IS_PREVIEW || !supabase) {
-      const saved = localStorage.getItem('ngulemin_prod_fallback_v1');
+      const saved = localStorage.getItem('ngulemin_prod_fallback_v2');
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
@@ -1089,6 +1239,7 @@
             ...parsed,
             site_settings: { ...INITIAL_CONTENT_DATA.site_settings, ...(parsed.site_settings || {}) }
           };
+          normalizeThemesSortOrder();
         } catch (e) {
           state.db = JSON.parse(JSON.stringify(INITIAL_CONTENT_DATA));
         }
@@ -1106,7 +1257,7 @@
         };
       }
 
-      // 2. Tarik Data dari Tabel Supabase
+      // 2. Tarik Data dari Tabel Supabase (Themes diurutkan berdasarkan sort_order ASC)
       const [
         { data: settings },
         { data: socials },
@@ -1122,7 +1273,7 @@
         supabase.from('site_settings').select('*').limit(1),
         supabase.from('social_links').select('*').order('sort_order', { ascending: true }),
         supabase.from('theme_categories').select('*').order('sort_order', { ascending: true }),
-        supabase.from('themes').select('*').order('created_at', { ascending: false }),
+        supabase.from('themes').select('*').order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
         supabase.from('pricing_plans').select('*').order('sort_order', { ascending: true }),
         supabase.from('features').select('*').order('sort_order', { ascending: true }),
         supabase.from('testimonials').select('*').order('created_at', { ascending: false }),
@@ -1134,7 +1285,10 @@
       if (settings && settings.length > 0) state.db.site_settings = { ...INITIAL_CONTENT_DATA.site_settings, ...settings[0] };
       if (socials && socials.length > 0) state.db.social_links = socials;
       if (categories && categories.length > 0) state.db.theme_categories = categories;
-      if (themes && themes.length > 0) state.db.themes = themes;
+      if (themes && themes.length > 0) {
+        state.db.themes = themes;
+        normalizeThemesSortOrder();
+      }
       if (pricing && pricing.length > 0) state.db.pricing_plans = pricing;
       if (features && features.length > 0) state.db.features = features;
       if (testi && testi.length > 0) state.db.testimonials = testi;
@@ -1162,9 +1316,7 @@
   }
 
   const persistLocalFallback = () => {
-    if (IS_PREVIEW || !supabase) {
-      localStorage.setItem('ngulemin_prod_fallback_v1', JSON.stringify(state.db));
-    }
+    localStorage.setItem('ngulemin_prod_fallback_v2', JSON.stringify(state.db));
   };
 
   // RENDER LOGO OTOMATIS DI SEMUA TEMPAT
@@ -1199,7 +1351,7 @@
   };
 
   // ==========================================
-  // RENDER KATALOG TEMA DI LANDING PAGE
+  // RENDER KATALOG TEMA DI LANDING PAGE (MENGIKUTI URUTAN TABEL DASHBOARD)
   // ==========================================
   const renderPublicThemesCatalog = () => {
     const catNamesFromSettings = state.db.theme_categories.map(c => c.name);
@@ -1219,22 +1371,27 @@
       sortSelectEl.value = state.publicThemeSort;
     }
 
+    // Urutkan dasar berdasarkan urutan Tabel Katalog Tema di Dashboard (sort_order ASC)
+    const baseOrderedThemes = sortThemesByTableOrder(state.db.themes);
+
     const searchKw = (state.publicThemeSearch || '').toLowerCase().trim();
-    let filteredThemes = state.db.themes.filter(t => {
+    let filteredThemes = baseOrderedThemes.filter(t => {
       const matchCat = state.activeCategory === 'Semua' || t.category === state.activeCategory;
       const matchSearch = !searchKw || t.title.toLowerCase().includes(searchKw) || t.category.toLowerCase().includes(searchKw);
       const matchPopular = state.publicThemeSort === 'terlaris' ? !!t.is_popular : true;
       return matchCat && matchSearch && matchPopular;
     });
 
-    filteredThemes = [...filteredThemes].sort((a, b) => {
-      if (state.publicThemeSort === 'terlaris') {
-        if (a.is_popular !== b.is_popular) return a.is_popular ? -1 : 1;
-      }
-      const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
-      const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
-      return dateB - dateA;
-    });
+    if (state.publicThemeSort === 'terbaru') {
+      filteredThemes = [...filteredThemes].sort((a, b) => {
+        const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+        const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+        return dateB - dateA;
+      });
+    } else if (state.publicThemeSort === 'terlaris') {
+      // Tetap mengikuti urutan tabel di antara tema-tema terlaris
+      filteredThemes = sortThemesByTableOrder(filteredThemes);
+    }
 
     const themesGrid = document.getElementById('themes-grid-container');
     if (!themesGrid) return;
@@ -1254,7 +1411,7 @@
       <div class="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] max-w-sm glass-card rounded-3xl overflow-hidden flex flex-col justify-between group hover:-translate-y-1 transition-all duration-300">
         <div>
           <div class="relative aspect-square ratio-1-1 overflow-hidden bg-pearl">
-            <img src="${t.image_url}" alt="${t.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            <img src="${t.image_url}" loading="lazy" alt="${t.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
             <span class="absolute top-3 left-3 px-3 py-1 rounded-full bg-charcoal/80 backdrop-blur-sm text-white text-[10px] font-semibold uppercase tracking-wider">
               ${t.category}
             </span>
@@ -1461,7 +1618,7 @@
   const renderDashboard = () => {
     const badge = document.getElementById('mode-indicator-badge');
     if (badge) {
-      badge.textContent = (!IS_PREVIEW && supabase) ? 'Terhubung ke Supabase' : 'Mode Offline / Lokal';
+      badge.textContent = (!IS_PREVIEW && supabase) ? 'Storage & DB Supabase Aktif' : 'Mode Offline / Lokal';
     }
     renderLogoElements();
 
@@ -1655,17 +1812,21 @@
               <textarea id="home-subtitle" rows="3" required class="w-full px-3.5 py-2.5 rounded-xl border border-gold/40 bg-white">${s.hero_subtitle}</textarea>
             </div>
 
+            <!-- Upload Gambar Banner Hero ke Supabase Storage dengan Auto-Compress -->
             <div class="p-4 rounded-2xl bg-pearl/70 border border-gold/30 flex flex-col sm:flex-row items-center gap-4">
               <img id="home-hero-preview-img" src="${s.hero_image}" alt="Preview Hero" class="w-24 h-24 aspect-square object-cover rounded-2xl border border-gold/40 shadow-sm shrink-0 bg-white" />
               <div class="flex-1 w-full space-y-2">
-                <label class="block text-xs font-bold uppercase text-charcoal">Upload Gambar Banner Hero dengan File (PNG / JPG / WEBP)</label>
+                <div class="flex items-center justify-between">
+                  <label class="block text-xs font-bold uppercase text-charcoal">Upload Gambar Banner Hero (Auto-Compress WebP & Simpan ke Supabase Storage)</label>
+                  <span id="hero-upload-status" class="text-[11px] font-semibold text-emerald-700"></span>
+                </div>
                 <input
                   type="file"
                   accept="image/*"
                   onchange="window.app.handleHeroFileUpload(event)"
                   class="w-full text-xs file:mr-3 file:py-1.5 file:px-3.5 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-gold file:text-white hover:file:opacity-90 cursor-pointer bg-white p-1.5 rounded-xl border border-gold/35"
                 />
-                <span class="text-[11px] text-charcoal/60 block">Atau masukkan URL gambar secara manual pada kolom di bawah:</span>
+                <span class="text-[11px] text-charcoal/60 block">URL Gambar di Supabase Storage (Otomatis terisi setelah diunggah):</span>
                 <input type="text" id="home-image" value="${s.hero_image}" required placeholder="https://..." class="w-full px-3 py-2 rounded-xl border border-gold/40 bg-white text-xs" />
               </div>
             </div>
@@ -1722,12 +1883,13 @@
       `;
     }
 
-    // 3. MENU TEMA
+    // 3. MENU TEMA (URUTAN TABEL KONSISTEN + AUTO COMPRESS KE SUPABASE STORAGE)
     if (tab === 'themes') {
       const kw = (state.adminThemeSearch || '').toLowerCase();
       const catFilter = state.adminThemeCategoryFilter || 'Semua';
 
-      const filteredAdminThemes = state.db.themes.filter(t => {
+      const orderedThemes = sortThemesByTableOrder(state.db.themes);
+      const filteredAdminThemes = orderedThemes.filter(t => {
         const matchKw = !kw || t.title.toLowerCase().includes(kw) || t.category.toLowerCase().includes(kw);
         const matchCat = catFilter === 'Semua' || t.category === catFilter;
         return matchKw && matchCat;
@@ -1739,7 +1901,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div class="lg:col-span-7 glass-card rounded-3xl p-6">
             <h3 class="font-serif text-2xl font-bold text-charcoal mb-1">Tambah / Edit Katalog Tema</h3>
-            <p class="text-xs text-charcoal/65 mb-4">Unggah file gambar tema (rasio 1:1) dari perangkat Anda atau tempel URL gambar.</p>
+            <p class="text-xs text-charcoal/65 mb-4">Gambar yang diunggah otomatis dikompres ke format WebP ringan (1:1) & disimpan ke Supabase Storage. Posisi tema tidak akan berubah saat diedit.</p>
             <form onsubmit="window.app.saveThemeItem(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
               <input type="hidden" id="thm-id" />
               <div>
@@ -1758,7 +1920,10 @@
                   <i class="fa-regular fa-image text-2xl"></i>
                 </div>
                 <div class="flex-1 w-full space-y-2">
-                  <label class="block text-xs font-bold uppercase text-charcoal">Upload File Gambar Tema (Rasio 1:1) *</label>
+                  <div class="flex items-center justify-between">
+                    <label class="block text-xs font-bold uppercase text-charcoal">Upload Gambar Tema 1:1 (Auto-Compress & Supabase Storage) *</label>
+                    <span id="thm-upload-status" class="text-[11px] font-semibold text-emerald-700"></span>
+                  </div>
                   <input
                     type="file"
                     id="thm-img-file"
@@ -1766,7 +1931,7 @@
                     onchange="window.app.handleThemeImageFileUpload(event)"
                     class="w-full text-xs file:mr-3 file:py-1.5 file:px-3.5 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-gold file:text-white hover:file:opacity-90 cursor-pointer bg-white p-1.5 rounded-xl border border-gold/35"
                   />
-                  <input type="text" id="thm-img" required placeholder="Atau tempel URL Gambar Thumbnail (https://...)" class="w-full px-3 py-2 rounded-xl border border-gold/40 bg-white text-xs" />
+                  <input type="text" id="thm-img" required placeholder="URL Gambar di Supabase Storage (https://...)" class="w-full px-3 py-2 rounded-xl border border-gold/40 bg-white text-xs" />
                 </div>
               </div>
 
@@ -1838,7 +2003,7 @@
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
             <div>
               <h3 class="font-serif text-2xl font-bold text-charcoal">Tabel Daftar Katalog Tema (${filteredAdminThemes.length})</h3>
-              <p class="text-xs text-charcoal/65">Preview gambar menggunakan rasio 1:1. Gunakan pencarian atau dropdown kategori untuk memfilter.</p>
+              <p class="text-xs text-charcoal/65">Urutan pada tabel ini adalah urutan resmi yang tampil di halaman utama website dan tidak berubah saat diedit atau direfresh.</p>
             </div>
             <div class="flex flex-col sm:flex-row gap-2.5">
               <div class="relative">
@@ -1862,6 +2027,7 @@
             <table class="w-full text-left border-collapse text-xs sm:text-sm">
               <thead>
                 <tr class="border-b border-gold/25 text-charcoal/70 uppercase text-[11px]">
+                  <th class="py-3 px-2.5 text-center">Urutan</th>
                   <th class="py-3 px-2.5">Gambar (1:1)</th>
                   <th class="py-3 px-2.5">Judul Tema</th>
                   <th class="py-3 px-2.5">Kategori</th>
@@ -1872,11 +2038,24 @@
               </thead>
               <tbody class="divide-y divide-gold/15">
                 ${filteredAdminThemes.length === 0 ? `
-                  <tr><td colspan="6" class="py-8 text-center text-charcoal/50">Tidak ada tema yang ditemukan.</td></tr>
-                ` : filteredAdminThemes.map(t => `
+                  <tr><td colspan="7" class="py-8 text-center text-charcoal/50">Tidak ada tema yang ditemukan.</td></tr>
+                ` : filteredAdminThemes.map((t, index) => `
                   <tr class="hover:bg-gold/5 transition-colors">
+                    <td class="py-3 px-2.5 text-center whitespace-nowrap">
+                      <div class="inline-flex items-center gap-1 bg-pearl/80 px-2 py-1 rounded-xl border border-gold/25">
+                        <span class="font-bold text-gold-dark text-xs w-5 text-center">#${t.sort_order || (index + 1)}</span>
+                        <div class="flex flex-col gap-0.5">
+                          <button type="button" onclick="window.app.moveThemeOrder('${t.id}', 'up')" title="Geser Naik" class="px-1.5 py-0.5 rounded bg-white hover:bg-gold/20 text-[10px] leading-none text-charcoal">
+                            <i class="fa-solid fa-chevron-up"></i>
+                          </button>
+                          <button type="button" onclick="window.app.moveThemeOrder('${t.id}', 'down')" title="Geser Turun" class="px-1.5 py-0.5 rounded bg-white hover:bg-gold/20 text-[10px] leading-none text-charcoal">
+                            <i class="fa-solid fa-chevron-down"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </td>
                     <td class="py-3 px-2.5">
-                      <img src="${t.image_url}" alt="${t.title}" class="w-14 h-14 aspect-square object-cover rounded-xl border border-gold/30" />
+                      <img src="${t.image_url}" loading="lazy" alt="${t.title}" class="w-14 h-14 aspect-square object-cover rounded-xl border border-gold/30" />
                     </td>
                     <td class="py-3 px-2.5 font-serif text-lg font-bold text-charcoal">${t.title}</td>
                     <td class="py-3 px-2.5">
@@ -2112,17 +2291,16 @@
       `;
     }
 
-    // 7. MENU PENGATURAN SISTEM (TANPA KREDENSIAL TEKS BIASA, MENGGUNAKAN SUPABASE AUTH)
+    // 7. MENU PENGATURAN SISTEM (UPLOAD LOGO KE SUPABASE STORAGE + AUTO COMPRESS)
     if (tab === 'system') {
       const s = state.db.site_settings;
       const currentAdminEmail = state.currentUser?.data?.email || '';
       container.innerHTML = `
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <!-- Kolom Kiri: Identitas, Upload Logo & Kontak -->
           <div class="lg:col-span-7 space-y-6">
             <div class="glass-card rounded-3xl p-6 sm:p-8">
               <h3 class="font-serif text-2xl font-bold text-charcoal mb-1">Identitas & Upload Logo Website</h3>
-              <p class="text-xs text-charcoal/70 mb-6">Unggah file logo dari perangkat Anda. Logo akan otomatis tampil di Halaman Utama, Halaman Login, dan Navbar Dashboard Admin.</p>
+              <p class="text-xs text-charcoal/70 mb-6">Unggah file logo dari perangkat Anda. File otomatis dikompres & disimpan ke Supabase Storage agar ringan dan langsung tampil di seluruh halaman.</p>
 
               <form onsubmit="window.app.saveSystemSettings(event)" class="space-y-4 text-sm">
                 <div class="p-4 rounded-2xl bg-pearl/70 border border-gold/30 flex flex-col sm:flex-row items-center gap-4">
@@ -2130,7 +2308,10 @@
                     ${s.logo_url ? `<img src="${s.logo_url}" class="w-full h-full object-cover" />` : `<i class="fa-solid fa-rings-wedding"></i>`}
                   </div>
                   <div class="flex-1 w-full space-y-2">
-                    <label class="block text-xs font-bold uppercase text-charcoal">Upload File Logo Website (PNG / JPG / WEBP / SVG)</label>
+                    <div class="flex items-center justify-between">
+                      <label class="block text-xs font-bold uppercase text-charcoal">Upload File Logo (Auto-Compress & Supabase Storage)</label>
+                      <span id="logo-upload-status" class="text-[11px] font-semibold text-emerald-700"></span>
+                    </div>
                     <input
                       type="file"
                       id="sys-logo-file"
@@ -2139,14 +2320,14 @@
                       class="w-full text-xs file:mr-3 file:py-1.5 file:px-3.5 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-gold file:text-white hover:file:opacity-90 cursor-pointer bg-white p-1.5 rounded-xl border border-gold/35"
                     />
                     <div class="flex items-center justify-between gap-2">
-                      <span class="text-[11px] text-charcoal/60">Atau tempel URL gambar logo di bawah.</span>
+                      <span class="text-[11px] text-charcoal/60">URL Logo di Supabase Storage otomatis terisi di bawah.</span>
                       <button type="button" onclick="window.app.clearLogoImage()" class="text-[11px] text-red-600 font-semibold hover:underline shrink-0">Reset Logo Default</button>
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <label class="block text-xs font-semibold uppercase mb-1">Data / URL Logo Saat Ini</label>
+                  <label class="block text-xs font-semibold uppercase mb-1">URL Logo Saat Ini</label>
                   <input type="text" id="sys-logo" value="${s.logo_url || ''}" placeholder="Kosongkan untuk ikon cincin default" class="w-full px-3.5 py-2 rounded-xl border border-gold/40 bg-white text-xs" />
                 </div>
 
@@ -2189,9 +2370,7 @@
             </div>
           </div>
 
-          <!-- Kolom Kanan: Kelola Media Sosial Footer & Keamanan Akun Admin (Supabase Auth) -->
           <div class="lg:col-span-5 space-y-6">
-            
             <div class="glass-card rounded-3xl p-6 sm:p-7 space-y-4">
               <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-2xl gold-gradient text-white flex items-center justify-center shadow">
@@ -2477,54 +2656,83 @@
       this.cancelDeleteAction();
     },
 
-    // UPLOAD GAMBAR DENGAN FILE
-    handleHeroFileUpload(event) {
+    // =========================================================================
+    // HANDLER UPLOAD GAMBAR (AUTO-COMPRESS + SUPABASE STORAGE BUCKET)
+    // =========================================================================
+    async handleHeroFileUpload(event) {
       const file = event.target.files?.[0];
       if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        const dataUrl = ev.target.result;
+      const statusEl = document.getElementById('hero-upload-status');
+      if (statusEl) statusEl.textContent = 'Mengompres & mengunggah...';
+
+      try {
+        const finalUrl = await uploadCompressedImageToSupabase(file, 'hero', {
+          maxWidth: 1200,
+          maxHeight: 1200,
+          quality: 0.86,
+          forceSquare: false
+        });
         const inputEl = document.getElementById('home-image');
-        if (inputEl) inputEl.value = dataUrl;
+        if (inputEl) inputEl.value = finalUrl;
         const previewEl = document.getElementById('home-hero-preview-img');
-        if (previewEl) previewEl.src = dataUrl;
-        showToast('Gambar Banner Hero siap! Klik "Simpan Perubahan Home" untuk menerapkan.');
-      };
-      reader.readAsDataURL(file);
+        if (previewEl) previewEl.src = finalUrl;
+        if (statusEl) statusEl.textContent = 'Tersimpan di Storage!';
+      } catch (err) {
+        if (statusEl) statusEl.textContent = '';
+        showToast('Gagal memproses gambar: ' + err.message, 'error');
+      }
     },
 
-    handleThemeImageFileUpload(event) {
+    async handleThemeImageFileUpload(event) {
       const file = event.target.files?.[0];
       if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        const dataUrl = ev.target.result;
+      const statusEl = document.getElementById('thm-upload-status');
+      if (statusEl) statusEl.textContent = 'Mengompres 1:1 & mengunggah...';
+
+      try {
+        const finalUrl = await uploadCompressedImageToSupabase(file, 'themes', {
+          maxWidth: 900,
+          maxHeight: 900,
+          quality: 0.86,
+          forceSquare: true // Otomatis crop 1:1 presisi dan jernih
+        });
         const inputEl = document.getElementById('thm-img');
-        if (inputEl) inputEl.value = dataUrl;
+        if (inputEl) inputEl.value = finalUrl;
         const previewBox = document.getElementById('thm-img-preview-box');
         if (previewBox) {
-          previewBox.innerHTML = `<img src="${dataUrl}" class="w-full h-full object-cover" />`;
+          previewBox.innerHTML = `<img src="${finalUrl}" class="w-full h-full object-cover" />`;
         }
-        showToast('Gambar Tema siap! Klik "Simpan Tema" untuk menyimpan.');
-      };
-      reader.readAsDataURL(file);
+        if (statusEl) statusEl.textContent = 'Tersimpan di Storage!';
+      } catch (err) {
+        if (statusEl) statusEl.textContent = '';
+        showToast('Gagal memproses gambar tema: ' + err.message, 'error');
+      }
     },
 
-    handleLogoFileUpload(event) {
+    async handleLogoFileUpload(event) {
       const file = event.target.files?.[0];
       if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        const dataUrl = ev.target.result;
+      const statusEl = document.getElementById('logo-upload-status');
+      if (statusEl) statusEl.textContent = 'Mengompres & mengunggah...';
+
+      try {
+        const finalUrl = await uploadCompressedImageToSupabase(file, 'logos', {
+          maxWidth: 512,
+          maxHeight: 512,
+          quality: 0.90,
+          forceSquare: true
+        });
         const logoInput = document.getElementById('sys-logo');
-        if (logoInput) logoInput.value = dataUrl;
+        if (logoInput) logoInput.value = finalUrl;
         const previewBox = document.getElementById('sys-logo-preview-box');
         if (previewBox) {
-          previewBox.innerHTML = `<img src="${dataUrl}" class="w-full h-full object-cover" />`;
+          previewBox.innerHTML = `<img src="${finalUrl}" class="w-full h-full object-cover" />`;
         }
-        showToast('File logo siap! Klik "Simpan Pengaturan Sistem & Logo" untuk menerapkan.');
-      };
-      reader.readAsDataURL(file);
+        if (statusEl) statusEl.textContent = 'Tersimpan di Storage!';
+      } catch (err) {
+        if (statusEl) statusEl.textContent = '';
+        showToast('Gagal memproses file logo: ' + err.message, 'error');
+      }
     },
 
     clearLogoImage() {
@@ -2574,6 +2782,8 @@
           return;
         }
 
+        normalizeThemesSortOrder();
+        let nextOrder = state.db.themes.length + 1;
         const importedThemes = [];
         const newCategoriesToSave = [];
 
@@ -2596,6 +2806,7 @@
             image_url,
             preview_url: preview_url || '#',
             is_popular,
+            sort_order: nextOrder++,
             created_at: new Date().toISOString()
           };
           importedThemes.push(newTheme);
@@ -2618,7 +2829,7 @@
           return;
         }
 
-        state.db.themes.unshift(...importedThemes);
+        state.db.themes.push(...importedThemes);
 
         if (!IS_PREVIEW && supabase) {
           if (newCategoriesToSave.length > 0) {
@@ -2630,7 +2841,7 @@
         persistLocalFallback();
         renderLandingPage();
         renderDashboard();
-        showToast(`Berhasil mengimport ${importedThemes.length} tema baru dari CSV!`);
+        showToast(`Berhasil mengimport ${importedThemes.length} tema baru sesuai urutan!`);
       };
       reader.readAsText(file);
     },
@@ -2640,7 +2851,8 @@
       const themeSelect = document.getElementById('order-theme-select');
       const pkgSelect = document.getElementById('order-package-select');
 
-      themeSelect.innerHTML = state.db.themes.map(t => `
+      const orderedThemes = sortThemesByTableOrder(state.db.themes);
+      themeSelect.innerHTML = orderedThemes.map(t => `
         <option value="${t.id}" ${themeId === t.id ? 'selected' : ''}>${t.title}</option>
       `).join('');
 
@@ -2671,7 +2883,6 @@
       const pkgObj = state.db.pricing_plans.find(p => p.plan_name === pkgName) || state.db.pricing_plans[0] || { plan_name: 'Regular', price: 0 };
       const totalPrice = Number(pkgObj.price || 0);
 
-      // Tarik daftar kode pesanan terbaru dari Supabase agar urutan NGU00001 selalu akurat
       if (!IS_PREVIEW && supabase) {
         const { data: latestOrders } = await supabase.from('orders').select('order_code');
         if (latestOrders && latestOrders.length > 0) {
@@ -2920,16 +3131,16 @@
     async saveSocialItem(e) {
       e.preventDefault();
       const id = document.getElementById('soc-id').value || ('soc-' + Date.now());
+      const existingIdx = state.db.social_links.findIndex(x => x.id === id);
       const item = {
         id,
         platform: document.getElementById('soc-platform').value.trim(),
         icon_class: document.getElementById('soc-icon').value,
         url: document.getElementById('soc-url').value.trim(),
-        sort_order: state.db.social_links.length + 1
+        sort_order: existingIdx >= 0 ? state.db.social_links[existingIdx].sort_order : state.db.social_links.length + 1
       };
 
-      const idx = state.db.social_links.findIndex(x => x.id === id);
-      if (idx >= 0) state.db.social_links[idx] = item;
+      if (existingIdx >= 0) state.db.social_links[existingIdx] = item;
       else state.db.social_links.push(item);
 
       if (!IS_PREVIEW && supabase) {
@@ -3074,7 +3285,9 @@
       showToast('Kategori Tema berhasil dihapus.');
     },
 
-    // CRUD TEMA
+    // =========================================================================
+    // CRUD TEMA & PENGATURAN URUTAN PERMANEN (TIDAK BERUBAH SAAT DIEDIT/REFRESH)
+    // =========================================================================
     editThemeItem(id) {
       const t = state.db.themes.find(x => x.id === id);
       if (!t) return;
@@ -3097,6 +3310,8 @@
       document.getElementById('thm-img').value = '';
       document.getElementById('thm-preview').value = '';
       document.getElementById('thm-popular').checked = false;
+      const statusEl = document.getElementById('thm-upload-status');
+      if (statusEl) statusEl.textContent = '';
       const previewBox = document.getElementById('thm-img-preview-box');
       if (previewBox) {
         previewBox.innerHTML = `<i class="fa-regular fa-image text-2xl"></i>`;
@@ -3105,8 +3320,20 @@
 
     async saveThemeItem(e) {
       e.preventDefault();
+      normalizeThemesSortOrder();
+
       const id = document.getElementById('thm-id').value || ('thm-' + Date.now());
       const existingIdx = state.db.themes.findIndex(x => x.id === id);
+
+      // Pertahankan sort_order dan created_at asli jika sedang mengedit agar posisi di tabel & website tidak berubah!
+      const preservedSortOrder = existingIdx >= 0
+        ? state.db.themes[existingIdx].sort_order
+        : state.db.themes.length + 1;
+
+      const preservedCreatedAt = existingIdx >= 0
+        ? (state.db.themes[existingIdx].created_at || new Date().toISOString())
+        : new Date().toISOString();
+
       const item = {
         id,
         title: document.getElementById('thm-title').value.trim(),
@@ -3114,25 +3341,73 @@
         image_url: document.getElementById('thm-img').value.trim(),
         preview_url: document.getElementById('thm-preview').value.trim(),
         is_popular: document.getElementById('thm-popular').checked,
-        created_at: existingIdx >= 0 ? (state.db.themes[existingIdx].created_at || new Date().toISOString()) : new Date().toISOString()
+        sort_order: preservedSortOrder,
+        created_at: preservedCreatedAt
       };
 
-      if (existingIdx >= 0) state.db.themes[existingIdx] = item;
-      else state.db.themes.unshift(item);
+      if (existingIdx >= 0) {
+        state.db.themes[existingIdx] = item;
+      } else {
+        state.db.themes.push(item);
+      }
+
+      normalizeThemesSortOrder();
 
       if (!IS_PREVIEW && supabase) {
-        await supabase.from('themes').upsert([item]);
+        const { error } = await supabase.from('themes').upsert([item]);
+        if (error) {
+          showToast('Gagal menyimpan tema ke Supabase: ' + error.message, 'error');
+          return;
+        }
       }
+
+      persistLocalFallback();
+      this.resetThemeForm();
+      renderLandingPage();
+      renderDashboard();
+      showToast('Katalog Tema berhasil disimpan (posisi urutan tetap terjaga)!');
+    },
+
+    async moveThemeOrder(themeId, direction) {
+      normalizeThemesSortOrder();
+      const idx = state.db.themes.findIndex(x => x.id === themeId);
+      if (idx === -1) return;
+
+      const targetIdx = direction === 'up' ? idx - 1 : idx + 1;
+      if (targetIdx < 0 || targetIdx >= state.db.themes.length) return;
+
+      // Tukar posisi di array
+      const temp = state.db.themes[idx];
+      state.db.themes[idx] = state.db.themes[targetIdx];
+      state.db.themes[targetIdx] = temp;
+
+      // Perbarui nilai sort_order secara berurutan
+      state.db.themes.forEach((t, i) => {
+        t.sort_order = i + 1;
+      });
+
+      if (!IS_PREVIEW && supabase) {
+        await supabase.from('themes').upsert([
+          state.db.themes[idx],
+          state.db.themes[targetIdx]
+        ]);
+      }
+
       persistLocalFallback();
       renderLandingPage();
       renderDashboard();
-      showToast('Katalog Tema berhasil disimpan!');
+      showToast('Urutan tampil tema berhasil diperbarui!');
     },
 
     async deleteThemeItem(id) {
       state.db.themes = state.db.themes.filter(x => x.id !== id);
+      normalizeThemesSortOrder();
+
       if (!IS_PREVIEW && supabase) {
         await supabase.from('themes').delete().eq('id', id);
+        if (state.db.themes.length > 0) {
+          await supabase.from('themes').upsert(state.db.themes);
+        }
       }
       persistLocalFallback();
       renderLandingPage();
@@ -3155,6 +3430,7 @@
     async savePricingItem(e) {
       e.preventDefault();
       const id = document.getElementById('prc-id').value || ('prc-' + Date.now());
+      const idx = state.db.pricing_plans.findIndex(x => x.id === id);
       const item = {
         id,
         plan_name: document.getElementById('prc-name').value.trim(),
@@ -3162,10 +3438,9 @@
         period_text: document.getElementById('prc-period').value.trim(),
         features_list: document.getElementById('prc-features').value.trim(),
         is_featured: document.getElementById('prc-featured').checked,
-        sort_order: state.db.pricing_plans.length + 1
+        sort_order: idx >= 0 ? state.db.pricing_plans[idx].sort_order : state.db.pricing_plans.length + 1
       };
 
-      const idx = state.db.pricing_plans.findIndex(x => x.id === id);
       if (idx >= 0) state.db.pricing_plans[idx] = item;
       else state.db.pricing_plans.push(item);
 
@@ -3198,13 +3473,14 @@
     async saveFeatureItem(e) {
       e.preventDefault();
       const id = document.getElementById('ftr-id').value || ('ftr-' + Date.now());
+      const idx = state.db.features.findIndex(x => x.id === id);
       const item = {
         id,
         title: document.getElementById('ftr-title').value.trim(),
         icon_name: document.getElementById('ftr-icon').value.trim(),
-        description: document.getElementById('ftr-desc').value.trim()
+        description: document.getElementById('ftr-desc').value.trim(),
+        sort_order: idx >= 0 ? state.db.features[idx].sort_order : state.db.features.length + 1
       };
-      const idx = state.db.features.findIndex(x => x.id === id);
       if (idx >= 0) state.db.features[idx] = item;
       else state.db.features.push(item);
 
@@ -3317,12 +3593,13 @@
     async saveFaqItem(e) {
       e.preventDefault();
       const id = document.getElementById('faq-id').value || ('faq-' + Date.now());
+      const idx = state.db.faqs.findIndex(x => x.id === id);
       const item = {
         id,
         question: document.getElementById('faq-q').value.trim(),
-        answer: document.getElementById('faq-a').value.trim()
+        answer: document.getElementById('faq-a').value.trim(),
+        sort_order: idx >= 0 ? state.db.faqs[idx].sort_order : state.db.faqs.length + 1
       };
-      const idx = state.db.faqs.findIndex(x => x.id === id);
       if (idx >= 0) state.db.faqs[idx] = item;
       else state.db.faqs.push(item);
 
