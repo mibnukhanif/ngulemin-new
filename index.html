@@ -101,7 +101,7 @@
       transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, transform 0.3s ease;
     }
     .popdown-drawer.popdown-open {
-      max-height: 600px;
+      max-height: 650px;
       opacity: 1;
       transform: translateY(0);
     }
@@ -210,8 +210,8 @@
           </div>
         </a>
 
-        <!-- Desktop Navigation Links -->
-        <nav class="hidden lg:flex items-center gap-7 text-sm font-medium text-charcoal/85">
+        <!-- Desktop Navigation Links (Termasuk Menu Daftar Reseller) -->
+        <nav class="hidden lg:flex items-center gap-6 text-sm font-medium text-charcoal/85">
           <a href="#sec-home" class="hover:text-gold-dark transition-colors">Home</a>
           <a href="#sec-tema" class="hover:text-gold-dark transition-colors">Tema</a>
           <a href="#sec-harga" class="hover:text-gold-dark transition-colors">Harga</a>
@@ -219,10 +219,14 @@
           <a href="#sec-testimoni" class="hover:text-gold-dark transition-colors">Testimoni</a>
           <a href="#sec-carapesan" class="hover:text-gold-dark transition-colors">Cara Pesan</a>
           <a href="#sec-faq" class="hover:text-gold-dark transition-colors">FAQ</a>
+          <button type="button" onclick="window.app.openResellerModal()" class="text-gold-dark hover:text-charcoal font-semibold transition-colors flex items-center gap-1.5">
+            <i class="fa-solid fa-handshake text-xs"></i>
+            <span>Daftar Reseller</span>
+          </button>
         </nav>
 
         <!-- Right Side CTA: Desktop Only + Mobile Dropdown Button -->
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2.5">
           <button onclick="window.app.openOrderModal()" class="hidden lg:flex gold-gradient text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-md hover:opacity-95 transition-all items-center gap-2">
             <i class="fa-solid fa-paper-plane"></i>
             <span>Pesan Sekarang</span>
@@ -251,7 +255,10 @@
             <a onclick="window.app.closeMobileMenu()" href="#sec-fitur" class="py-2.5 px-3.5 rounded-xl hover:bg-gold/10 flex items-center gap-2.5"><i class="fa-solid fa-wand-magic-sparkles w-5 text-gold-dark"></i> Fitur</a>
             <a onclick="window.app.closeMobileMenu()" href="#sec-testimoni" class="py-2.5 px-3.5 rounded-xl hover:bg-gold/10 flex items-center gap-2.5"><i class="fa-solid fa-comments w-5 text-gold-dark"></i> Testimoni</a>
             <a onclick="window.app.closeMobileMenu()" href="#sec-carapesan" class="py-2.5 px-3.5 rounded-xl hover:bg-gold/10 flex items-center gap-2.5"><i class="fa-solid fa-list-check w-5 text-gold-dark"></i> Cara Pesan</a>
-            <a onclick="window.app.closeMobileMenu()" href="#sec-faq" class="py-2.5 px-3.5 rounded-xl hover:bg-gold/10 flex items-center gap-2.5 col-span-2"><i class="fa-solid fa-circle-question w-5 text-gold-dark"></i> Pertanyaan Umum (FAQ)</a>
+            <a onclick="window.app.closeMobileMenu()" href="#sec-faq" class="py-2.5 px-3.5 rounded-xl hover:bg-gold/10 flex items-center gap-2.5"><i class="fa-solid fa-circle-question w-5 text-gold-dark"></i> FAQ</a>
+            <button type="button" onclick="window.app.closeMobileMenu(); window.app.openResellerModal();" class="py-2.5 px-3.5 rounded-xl bg-gold/15 hover:bg-gold/25 text-gold-dark font-semibold flex items-center gap-2.5 text-left">
+              <i class="fa-solid fa-handshake w-5 text-gold-dark"></i> Daftar Reseller
+            </button>
           </div>
 
           <div class="pt-3 border-t border-gold/20 flex flex-col sm:flex-row gap-2.5">
@@ -488,6 +495,11 @@
               <li><a href="#sec-testimoni" class="hover:text-gold-light transition-colors">Testimoni</a></li>
               <li><a href="#sec-carapesan" class="hover:text-gold-light transition-colors">Cara Pemesanan</a></li>
               <li><a href="#sec-faq" class="hover:text-gold-light transition-colors">FAQ</a></li>
+              <li>
+                <button type="button" onclick="window.app.openResellerModal()" class="text-gold-light font-semibold hover:underline">
+                  Daftar Reseller
+                </button>
+              </li>
             </ul>
           </div>
 
@@ -508,10 +520,14 @@
                 <span id="footer-address-text">Tegal, Jawa Tengah, Indonesia</span>
               </p>
             </div>
-            <div class="pt-2">
+            <div class="pt-2 flex flex-wrap justify-center md:justify-start gap-2">
               <button onclick="window.app.openOrderModal()" class="gold-gradient text-white px-5 py-2.5 rounded-full text-xs font-semibold shadow hover:opacity-95 transition-all inline-flex items-center gap-2">
                 <i class="fa-solid fa-paper-plane"></i>
-                <span>Pesan Undangan Sekarang</span>
+                <span>Pesan Undangan</span>
+              </button>
+              <button onclick="window.app.openResellerModal()" class="px-4 py-2.5 rounded-full border border-gold text-gold-light hover:bg-gold/15 text-xs font-semibold transition-all inline-flex items-center gap-1.5">
+                <i class="fa-solid fa-handshake"></i>
+                <span>Daftar Reseller</span>
               </button>
             </div>
           </div>
@@ -716,7 +732,87 @@
   </div>
 
   <!-- ========================================== -->
-  <!-- MODAL 2: LOGIN ADMIN UTAMA (TANPA DEFAULT) -->
+  <!-- MODAL 2: POPUP FORM DAFTAR RESELLER        -->
+  <!-- ========================================== -->
+  <div id="modal-reseller" class="hidden fixed inset-0 z-50 bg-charcoal/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="glass-modal rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl relative my-8 max-h-[92vh] overflow-y-auto">
+      <button onclick="window.app.closeResellerModal()" class="absolute top-5 right-5 w-9 h-9 rounded-full bg-charcoal/10 hover:bg-charcoal/20 flex items-center justify-center text-charcoal">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-11 h-11 rounded-full gold-gradient text-white flex items-center justify-center shadow">
+          <i class="fa-solid fa-handshake"></i>
+        </div>
+        <div>
+          <span class="text-[11px] uppercase tracking-widest text-gold-dark font-bold">Kemitraan Resmi</span>
+          <h3 class="font-serif text-2xl sm:text-3xl font-bold text-charcoal">Form Daftar Reseller</h3>
+        </div>
+      </div>
+
+      <form id="form-register-reseller" onsubmit="window.app.submitResellerForm(event)" class="space-y-4 text-sm">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-charcoal/80 mb-1">Nama Lengkap *</label>
+            <input type="text" id="reseller-fullname" required placeholder="Masukkan nama lengkap..." class="w-full px-3.5 py-2.5 rounded-xl border border-gold/40 bg-white focus:outline-none focus:ring-2 focus:ring-gold" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-charcoal/80 mb-1">Nama Brand *</label>
+            <input type="text" id="reseller-brand" required placeholder="Contoh: Studio Undangan Anda" class="w-full px-3.5 py-2.5 rounded-xl border border-gold/40 bg-white focus:outline-none focus:ring-2 focus:ring-gold" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-charcoal/80 mb-1">Alamat *</label>
+          <textarea id="reseller-address" rows="2" required placeholder="Masukkan alamat lengkap domisili / usaha..." class="w-full px-3.5 py-2 rounded-xl border border-gold/40 bg-white focus:outline-none focus:ring-2 focus:ring-gold"></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-charcoal/80 mb-1">Gmail *</label>
+            <input type="email" id="reseller-email" required placeholder="nama@gmail.com" class="w-full px-3.5 py-2.5 rounded-xl border border-gold/40 bg-white focus:outline-none focus:ring-2 focus:ring-gold" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-charcoal/80 mb-1">Whatsapp *</label>
+            <input type="tel" id="reseller-whatsapp" required placeholder="081234567890" class="w-full px-3.5 py-2.5 rounded-xl border border-gold/40 bg-white focus:outline-none focus:ring-2 focus:ring-gold" />
+          </div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-pearl/70 border border-gold/30 space-y-3.5">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-gold-dark block">
+            <i class="fa-solid fa-building-columns mr-1"></i> Data Rekening / E-Wallet Reseller
+          </span>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-charcoal/80 mb-1">Bank / Ewalet *</label>
+              <input type="text" id="reseller-bank" required placeholder="BCA / BRI / Dana / OVO" class="w-full px-3 py-2 rounded-xl border border-gold/40 bg-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-gold" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-charcoal/80 mb-1">Nomor Rekening *</label>
+              <input type="text" id="reseller-acc-number" required placeholder="Nomor rekening / e-wallet" class="w-full px-3 py-2 rounded-xl border border-gold/40 bg-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-gold" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-charcoal/80 mb-1">Atas Nama *</label>
+              <input type="text" id="reseller-acc-holder" required placeholder="Nama pemilik rekening" class="w-full px-3 py-2 rounded-xl border border-gold/40 bg-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-gold" />
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-2 flex flex-col sm:flex-row gap-3">
+          <button type="submit" class="flex-1 gold-gradient text-white py-3.5 px-6 rounded-full font-semibold shadow-lg hover:opacity-95 flex items-center justify-center gap-2">
+            <i class="fa-brands fa-whatsapp text-lg"></i>
+            <span>Daftar Reseller & Kirim ke WA</span>
+          </button>
+          <button type="button" onclick="window.app.closeResellerModal()" class="py-3.5 px-6 rounded-full border border-gold/40 text-charcoal font-medium hover:bg-gold/10">
+            Batal
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL 3: LOGIN ADMIN UTAMA (TANPA DEFAULT) -->
   <!-- ========================================== -->
   <div id="modal-login" class="hidden fixed inset-0 z-50 bg-charcoal/60 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="glass-modal rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl relative">
@@ -763,7 +859,7 @@
   </div>
 
   <!-- ========================================== -->
-  <!-- MODAL 3: POPUP KONFIRMASI HAPUS DATA       -->
+  <!-- MODAL 4: POPUP KONFIRMASI HAPUS DATA       -->
   <!-- ========================================== -->
   <div id="modal-confirm-delete" class="hidden fixed inset-0 z-[70] bg-charcoal/70 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="glass-modal rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl border border-red-300">
@@ -786,7 +882,7 @@
   </div>
 
   <!-- ========================================== -->
-  <!-- MODAL 4: POPUP LIHAT DETAIL PESANAN        -->
+  <!-- MODAL 5: POPUP LIHAT DETAIL PESANAN        -->
   <!-- ========================================== -->
   <div id="modal-order-detail" class="hidden fixed inset-0 z-[65] bg-charcoal/65 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
     <div class="glass-modal rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative my-8">
@@ -854,7 +950,7 @@
     }
   };
 
-  // PENGATURAN DEFAULT TEKS HEADER/HOME (HANYA UNTUK FALLBACK TEKS AWAL SITE_SETTINGS)
+  // PENGATURAN DEFAULT TEKS HEADER/HOME
   const DEFAULT_SITE_SETTINGS = {
     id: 'settings-1',
     brand_name: 'NGULEMIN',
@@ -924,16 +1020,23 @@
     faqs: [
       { id: 'faq-1', question: 'Berapa lama proses pembuatan undangan digital di NGULEMIN?', answer: 'Proses normal memakan waktu 6 hingga 24 jam.', sort_order: 1 }
     ],
-    orders: []
+    orders: [],
+    resellers: []
   };
 
-  // DAFTAR & URUTAN MENU DASHBOARD ADMIN
+  // DAFTAR & URUTAN MENU DASHBOARD ADMIN (TERMASUK MENU RESELLER)
   const DASHBOARD_MENUS = [
     {
       id: 'orders',
       icon: 'fa-bag-shopping',
       label: 'Pesanan Masuk',
       desc: 'Kelola daftar pesanan pelanggan, pantau status pengerjaan, dan lihat rincian pesanan.'
+    },
+    {
+      id: 'resellers',
+      icon: 'fa-handshake',
+      label: 'Reseller',
+      desc: 'Kelola daftar mitra reseller terdaftar, edit informasi brand & rekening bank/e-wallet, atau hapus data reseller.'
     },
     {
       id: 'home',
@@ -973,7 +1076,7 @@
     }
   ];
 
-  // STATE APLIKASI UTAMA (SAAT IS_PREVIEW = FALSE, SELURUH DAFTAR DIMULAI KOSONG & MURNI MENGIKUTI SUPABASE)
+  // STATE APLIKASI UTAMA
   const state = {
     currentView: 'landing',
     activeCategory: 'Semua',
@@ -982,6 +1085,7 @@
     currentUser: null,
     activeDashTab: 'orders',
     adminOrderSearch: '',
+    adminResellerSearch: '',
     adminThemeSearch: '',
     adminThemeCategoryFilter: 'Semua',
     openFaqIndex: 0,
@@ -999,7 +1103,8 @@
           testimonials: [],
           order_steps: [],
           faqs: [],
-          orders: []
+          orders: [],
+          resellers: []
         }
   };
 
@@ -1180,20 +1285,21 @@
   };
 
   // =========================================================================
-  // SINKRONISASI MURNI DARI SUPABASE (TANPA MENYUNTIKKAN TEMA DUMMY LAGI)
+  // SINKRONISASI MURNI DARI SUPABASE
   // =========================================================================
   async function autoSetupDatabase() {
     if (IS_PREVIEW) {
-      const saved = localStorage.getItem('ngulemin_preview_only_v1');
+      const saved = localStorage.getItem('ngulemin_preview_only_v2');
       if (saved) {
         try {
           state.db = JSON.parse(saved);
+          if (!state.db.resellers) state.db.resellers = [];
           normalizeThemesSortOrder();
         } catch (e) {
           state.db = JSON.parse(JSON.stringify(PREVIEW_ONLY_DUMMY_DATA));
         }
       } else {
-        localStorage.setItem('ngulemin_preview_only_v1', JSON.stringify(state.db));
+        localStorage.setItem('ngulemin_preview_only_v2', JSON.stringify(state.db));
       }
       return;
     }
@@ -1207,7 +1313,8 @@
       'ngulemin_preview_db_v5',
       'ngulemin_prod_fallback_v1',
       'ngulemin_prod_fallback_v2',
-      'ngulemin_prod_fallback_v3'
+      'ngulemin_prod_fallback_v3',
+      'ngulemin_preview_only_v1'
     ].forEach(k => localStorage.removeItem(k));
 
     if (!supabase) {
@@ -1225,7 +1332,7 @@
         };
       }
 
-      // 2. Tarik Data Murni dari Tabel Supabase
+      // 2. Tarik Data Murni dari Tabel Supabase (Termasuk Tabel Resellers)
       const [
         resSettings,
         resSocials,
@@ -1236,7 +1343,8 @@
         resTesti,
         resSteps,
         resFaqs,
-        resOrders
+        resOrders,
+        resResellers
       ] = await Promise.all([
         supabase.from('site_settings').select('*').limit(1),
         supabase.from('social_links').select('*'),
@@ -1247,10 +1355,10 @@
         supabase.from('testimonials').select('*'),
         supabase.from('order_steps').select('*'),
         supabase.from('faqs').select('*'),
-        supabase.from('orders').select('*').order('created_at', { ascending: false })
+        supabase.from('orders').select('*').order('created_at', { ascending: false }),
+        supabase.from('resellers').select('*').order('created_at', { ascending: false })
       ]);
 
-      // Tetapkan hasil dari Supabase apa adanya (meskipun kosong [] karena sudah dihapus oleh Admin!)
       if (resSettings.data && resSettings.data.length > 0) {
         state.db.site_settings = { ...DEFAULT_SITE_SETTINGS, ...resSettings.data[0] };
       } else if (state.currentUser) {
@@ -1284,6 +1392,9 @@
       if (Array.isArray(resOrders.data)) {
         state.db.orders = resOrders.data;
       }
+      if (Array.isArray(resResellers.data)) {
+        state.db.resellers = resResellers.data;
+      }
     } catch (err) {
       console.error('Supabase fetch error:', err);
       showToast('Gagal memuat data dari Supabase: ' + err.message, 'error');
@@ -1292,7 +1403,7 @@
 
   const persistLocalPreviewOnly = () => {
     if (IS_PREVIEW) {
-      localStorage.setItem('ngulemin_preview_only_v1', JSON.stringify(state.db));
+      localStorage.setItem('ngulemin_preview_only_v2', JSON.stringify(state.db));
     }
   };
 
@@ -1698,8 +1809,8 @@
             <p class="font-serif text-3xl font-bold text-charcoal mt-1">${state.db.orders.length}</p>
           </div>
           <div class="glass-card p-5 rounded-2xl">
-            <span class="text-xs text-charcoal/60">Total Katalog Tema di Supabase</span>
-            <p class="font-serif text-3xl font-bold text-gold-dark mt-1">${state.db.themes.length} Tema</p>
+            <span class="text-xs text-charcoal/60">Total Mitra Reseller</span>
+            <p class="font-serif text-3xl font-bold text-gold-dark mt-1">${state.db.resellers.length} Reseller</p>
           </div>
           <div class="glass-card p-5 rounded-2xl">
             <span class="text-xs text-charcoal/60">Estimasi Omzet Pesanan</span>
@@ -1806,7 +1917,160 @@
       `;
     }
 
-    // 2. MENU HOME
+    // 2. MENU RESELLER (TABEL DAFTAR RESELLER + FITUR EDIT & HAPUS)
+    if (tab === 'resellers') {
+      const kw = (state.adminResellerSearch || '').toLowerCase();
+      const filteredResellers = state.db.resellers.filter(r => {
+        if (!kw) return true;
+        return (
+          (r.full_name || '').toLowerCase().includes(kw) ||
+          (r.brand_name || '').toLowerCase().includes(kw) ||
+          (r.address || '').toLowerCase().includes(kw) ||
+          (r.email || '').toLowerCase().includes(kw) ||
+          (r.whatsapp || '').toLowerCase().includes(kw) ||
+          (r.bank_ewallet || '').toLowerCase().includes(kw) ||
+          (r.account_number || '').toLowerCase().includes(kw) ||
+          (r.account_holder || '').toLowerCase().includes(kw)
+        );
+      });
+
+      container.innerHTML = `
+        <!-- Form Edit / Tambah Data Reseller -->
+        <div class="glass-card rounded-3xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 id="reseller-form-title" class="font-serif text-2xl font-bold text-charcoal">Tambah / Edit Data Reseller</h3>
+              <p class="text-xs text-charcoal/65">Klik tombol <b>Edit</b> pada tabel di bawah untuk mengubah data reseller atau tambahkan secara manual.</p>
+            </div>
+          </div>
+
+          <form onsubmit="window.app.saveResellerAdminForm(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs sm:text-sm">
+            <input type="hidden" id="adm-res-id" />
+            <div>
+              <label class="block text-xs font-semibold mb-1">Nama Lengkap *</label>
+              <input type="text" id="adm-res-fullname" required placeholder="Nama Lengkap" class="w-full px-3.5 py-2 rounded-xl border border-gold/40 bg-white" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold mb-1">Nama Brand *</label>
+              <input type="text" id="adm-res-brand" required placeholder="Nama Brand Reseller" class="w-full px-3.5 py-2 rounded-xl border border-gold/40 bg-white" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold mb-1">Gmail *</label>
+              <input type="email" id="adm-res-email" required placeholder="email@gmail.com" class="w-full px-3.5 py-2 rounded-xl border border-gold/40 bg-white" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold mb-1">Whatsapp *</label>
+              <input type="text" id="adm-res-wa" required placeholder="081234567890" class="w-full px-3.5 py-2 rounded-xl border border-gold/40 bg-white" />
+            </div>
+            <div class="sm:col-span-2 lg:col-span-1">
+              <label class="block text-xs font-semibold mb-1">Alamat *</label>
+              <input type="text" id="adm-res-address" required placeholder="Alamat lengkap" class="w-full px-3.5 py-2 rounded-xl border border-gold/40 bg-white" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold mb-1">Bank / Ewalet *</label>
+              <input type="text" id="adm-res-bank" required placeholder="BCA / Mandiri / Dana" class="w-full px-3.5 py-2 rounded-xl border border-gold/40 bg-white" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold mb-1">Nomor Rekening *</label>
+              <input type="text" id="adm-res-accnum" required placeholder="Nomor Rekening" class="w-full px-3.5 py-2 rounded-xl border border-gold/40 bg-white" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold mb-1">Atas Nama *</label>
+              <input type="text" id="adm-res-accholder" required placeholder="Nama Pemilik Rekening" class="w-full px-3.5 py-2 rounded-xl border border-gold/40 bg-white" />
+            </div>
+
+            <div class="sm:col-span-2 lg:col-span-4 flex justify-end gap-2 pt-2 border-t border-gold/15">
+              <button type="button" onclick="window.app.resetResellerAdminForm()" class="px-4 py-2 rounded-full border border-gold/40 text-xs font-semibold hover:bg-gold/10">
+                Reset Form
+              </button>
+              <button type="submit" class="gold-gradient text-white px-6 py-2 rounded-full text-xs font-semibold shadow">
+                <i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Data Reseller
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Tabel Daftar Reseller -->
+        <div class="glass-card rounded-3xl p-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+            <div>
+              <h3 class="font-serif text-2xl font-bold text-charcoal">Tabel Daftar Reseller (${filteredResellers.length})</h3>
+              <p class="text-xs text-charcoal/65">Daftar seluruh mitra reseller yang mendaftar melalui form halaman utama.</p>
+            </div>
+            <div class="relative w-full sm:w-72">
+              <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-charcoal/40 text-xs"></i>
+              <input
+                type="text"
+                value="${state.adminResellerSearch}"
+                oninput="window.app.setResellerSearch(this.value)"
+                placeholder="Cari nama, brand, WA, atau bank..."
+                class="w-full pl-9 pr-3.5 py-2 rounded-xl border border-gold/40 bg-white text-xs focus:outline-none focus:ring-2 focus:ring-gold"
+              />
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="border-b border-gold/25 text-charcoal/70 uppercase text-[11px] whitespace-nowrap bg-pearl/40">
+                  <th class="py-3.5 px-3">NAMA LENGKAP</th>
+                  <th class="py-3.5 px-3">NAMA BRAND</th>
+                  <th class="py-3.5 px-3">ALAMAT</th>
+                  <th class="py-3.5 px-3">GMAIL</th>
+                  <th class="py-3.5 px-3">WHATSAPP</th>
+                  <th class="py-3.5 px-3">BANK / EWALET</th>
+                  <th class="py-3.5 px-3">NOMOR REKENING</th>
+                  <th class="py-3.5 px-3">ATAS NAMA</th>
+                  <th class="py-3.5 px-3 text-right">AKSI</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gold/15">
+                ${filteredResellers.length === 0 ? `
+                  <tr><td colspan="9" class="py-8 text-center text-charcoal/50">Belum ada data reseller terdaftar di database.</td></tr>
+                ` : filteredResellers.map(r => `
+                  <tr class="hover:bg-gold/5 transition-colors whitespace-nowrap">
+                    <td class="py-3.5 px-3 font-bold text-charcoal">${r.full_name}</td>
+                    <td class="py-3.5 px-3">
+                      <span class="px-2.5 py-1 rounded-full bg-gold/15 text-gold-dark font-semibold text-xs">${r.brand_name}</span>
+                    </td>
+                    <td class="py-3.5 px-3 max-w-[200px] truncate" title="${r.address}">${r.address}</td>
+                    <td class="py-3.5 px-3 text-charcoal/80">${r.email}</td>
+                    <td class="py-3.5 px-3">
+                      <a href="https://wa.me/${(r.whatsapp || '').replace(/^0/, '62')}" target="_blank" class="text-emerald-700 font-semibold hover:underline flex items-center gap-1">
+                        <i class="fa-brands fa-whatsapp"></i>
+                        <span>${r.whatsapp}</span>
+                      </a>
+                    </td>
+                    <td class="py-3.5 px-3 font-semibold text-charcoal">${r.bank_ewallet}</td>
+                    <td class="py-3.5 px-3 font-mono font-bold text-gold-dark">${r.account_number}</td>
+                    <td class="py-3.5 px-3 text-charcoal">${r.account_holder}</td>
+                    <td class="py-3.5 px-3 text-right space-x-1">
+                      <button
+                        onclick="window.app.editResellerItem('${r.id}')"
+                        title="Edit Reseller"
+                        class="px-3 py-1.5 rounded-lg bg-gold/15 text-gold-dark hover:bg-gold/25 text-xs font-semibold inline-flex items-center gap-1"
+                      >
+                        <i class="fa-solid fa-pen"></i>
+                        <span>Edit</span>
+                      </button>
+                      <button
+                        onclick="window.app.confirmDelete('Apakah Anda yakin ingin menghapus reseller &quot;${r.full_name} (${r.brand_name})&quot;?', () => window.app.deleteResellerItem('${r.id}'))"
+                        title="Hapus Reseller"
+                        class="px-2.5 py-1.5 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 text-xs font-semibold"
+                      >
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    // 3. MENU HOME
     if (tab === 'home') {
       const s = state.db.site_settings;
       container.innerHTML = `
@@ -1895,7 +2159,7 @@
       `;
     }
 
-    // 3. MENU TEMA (FITUR GESER DRAG & DROP DENGAN SIMBOL GRIP ⋮⋮)
+    // 4. MENU TEMA (FITUR GESER DRAG & DROP DENGAN SIMBOL GRIP ⋮⋮)
     if (tab === 'themes') {
       const kw = (state.adminThemeSearch || '').toLowerCase();
       const catFilter = state.adminThemeCategoryFilter || 'Semua';
@@ -2105,7 +2369,7 @@
       initAdminThemeSortable();
     }
 
-    // 4. MENU KATEGORI
+    // 5. MENU KATEGORI
     if (tab === 'categories') {
       container.innerHTML = `
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -2167,7 +2431,7 @@
       `;
     }
 
-    // 5. MENU HARGA & FITUR
+    // 6. MENU HARGA & FITUR
     if (tab === 'pricing_features') {
       container.innerHTML = `
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -2241,7 +2505,7 @@
       `;
     }
 
-    // 6. MENU TESTIMONI, CARA & FAQ
+    // 7. MENU TESTIMONI, CARA & FAQ
     if (tab === 'testi_steps_faq') {
       container.innerHTML = `
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -2315,7 +2579,7 @@
       `;
     }
 
-    // 7. MENU PENGATURAN SISTEM
+    // 8. MENU PENGATURAN SISTEM
     if (tab === 'system') {
       const s = state.db.site_settings;
       const currentAdminEmail = state.currentUser?.data?.email || '';
@@ -2574,6 +2838,154 @@
       const icon = document.getElementById('dash-mobile-menu-icon');
       if (drawer) drawer.classList.remove('popdown-open');
       if (icon) icon.style.transform = 'rotate(0deg)';
+    },
+
+    // =========================================================================
+    // POPUP FORM DAFTAR RESELLER (HALAMAN UTAMA -> SUPABASE & WHATSAPP ADMIN)
+    // =========================================================================
+    openResellerModal() {
+      document.getElementById('modal-reseller').classList.remove('hidden');
+    },
+
+    closeResellerModal() {
+      document.getElementById('modal-reseller').classList.add('hidden');
+    },
+
+    async submitResellerForm(e) {
+      e.preventDefault();
+      const newReseller = {
+        id: 'res-' + Date.now(),
+        full_name: document.getElementById('reseller-fullname').value.trim(),
+        brand_name: document.getElementById('reseller-brand').value.trim(),
+        address: document.getElementById('reseller-address').value.trim(),
+        email: document.getElementById('reseller-email').value.trim(),
+        whatsapp: document.getElementById('reseller-whatsapp').value.trim(),
+        bank_ewallet: document.getElementById('reseller-bank').value.trim(),
+        account_number: document.getElementById('reseller-acc-number').value.trim(),
+        account_holder: document.getElementById('reseller-acc-holder').value.trim(),
+        created_at: new Date().toISOString()
+      };
+
+      if (!IS_PREVIEW && supabase) {
+        const { error } = await supabase.from('resellers').insert([newReseller]);
+        if (error) {
+          showToast('Gagal menyimpan pendaftaran reseller ke database: ' + error.message, 'error');
+          return;
+        }
+      }
+
+      state.db.resellers.unshift(newReseller);
+      persistLocalPreviewOnly();
+      this.closeResellerModal();
+      document.getElementById('form-register-reseller').reset();
+      showToast('Pendaftaran Reseller berhasil disimpan! Mengarahkan ke WhatsApp...');
+
+      const waAdmin = state.db.site_settings.whatsapp_number || '6281234567890';
+      const waText = encodeURIComponent(
+        `Halo Admin *${state.db.site_settings.brand_name}*,\n` +
+        `Saya ingin mendaftar sebagai *Mitra Reseller*:\n\n` +
+        `• *Nama Lengkap:* ${newReseller.full_name}\n` +
+        `• *Nama Brand:* ${newReseller.brand_name}\n` +
+        `• *Alamat:* ${newReseller.address}\n` +
+        `• *Gmail:* ${newReseller.email}\n` +
+        `• *Whatsapp:* ${newReseller.whatsapp}\n` +
+        `• *Bank / Ewalet:* ${newReseller.bank_ewallet}\n` +
+        `• *Nomor Rekening:* ${newReseller.account_number}\n` +
+        `• *Atas Nama:* ${newReseller.account_holder}\n\n` +
+        `Mohon informasi aktivasi kemitraan reseller selanjutnya. Terima kasih!`
+      );
+      window.open(`https://wa.me/${waAdmin}?text=${waText}`, '_blank');
+    },
+
+    // =========================================================================
+    // CRUD MANAJEMEN RESELLER DI DASHBOARD ADMIN
+    // =========================================================================
+    setResellerSearch(val) {
+      state.adminResellerSearch = val;
+      renderAdminTabContent();
+    },
+
+    editResellerItem(id) {
+      const r = state.db.resellers.find(x => x.id === id);
+      if (!r) return;
+      document.getElementById('adm-res-id').value = r.id;
+      document.getElementById('adm-res-fullname').value = r.full_name || '';
+      document.getElementById('adm-res-brand').value = r.brand_name || '';
+      document.getElementById('adm-res-address').value = r.address || '';
+      document.getElementById('adm-res-email').value = r.email || '';
+      document.getElementById('adm-res-wa').value = r.whatsapp || '';
+      document.getElementById('adm-res-bank').value = r.bank_ewallet || '';
+      document.getElementById('adm-res-accnum').value = r.account_number || '';
+      document.getElementById('adm-res-accholder').value = r.account_holder || '';
+      const titleEl = document.getElementById('reseller-form-title');
+      if (titleEl) titleEl.textContent = `Edit Data Reseller: ${r.full_name}`;
+      document.getElementById('ngulemin-app-root').scrollTo({ top: 0, behavior: 'smooth' });
+    },
+
+    resetResellerAdminForm() {
+      document.getElementById('adm-res-id').value = '';
+      document.getElementById('adm-res-fullname').value = '';
+      document.getElementById('adm-res-brand').value = '';
+      document.getElementById('adm-res-address').value = '';
+      document.getElementById('adm-res-email').value = '';
+      document.getElementById('adm-res-wa').value = '';
+      document.getElementById('adm-res-bank').value = '';
+      document.getElementById('adm-res-accnum').value = '';
+      document.getElementById('adm-res-accholder').value = '';
+      const titleEl = document.getElementById('reseller-form-title');
+      if (titleEl) titleEl.textContent = 'Tambah / Edit Data Reseller';
+    },
+
+    async saveResellerAdminForm(e) {
+      e.preventDefault();
+      const id = document.getElementById('adm-res-id').value || ('res-' + Date.now());
+      const existingIdx = state.db.resellers.findIndex(x => x.id === id);
+
+      const item = {
+        id,
+        full_name: document.getElementById('adm-res-fullname').value.trim(),
+        brand_name: document.getElementById('adm-res-brand').value.trim(),
+        address: document.getElementById('adm-res-address').value.trim(),
+        email: document.getElementById('adm-res-email').value.trim(),
+        whatsapp: document.getElementById('adm-res-wa').value.trim(),
+        bank_ewallet: document.getElementById('adm-res-bank').value.trim(),
+        account_number: document.getElementById('adm-res-accnum').value.trim(),
+        account_holder: document.getElementById('adm-res-accholder').value.trim(),
+        created_at: existingIdx >= 0 ? (state.db.resellers[existingIdx].created_at || new Date().toISOString()) : new Date().toISOString()
+      };
+
+      if (!IS_PREVIEW && supabase) {
+        const { error } = await supabase.from('resellers').upsert([item]);
+        if (error) {
+          showToast('Gagal menyimpan data reseller ke Supabase: ' + error.message, 'error');
+          return;
+        }
+      }
+
+      if (existingIdx >= 0) {
+        state.db.resellers[existingIdx] = item;
+      } else {
+        state.db.resellers.unshift(item);
+      }
+
+      persistLocalPreviewOnly();
+      this.resetResellerAdminForm();
+      renderDashboard();
+      showToast('Data Reseller berhasil disimpan!');
+    },
+
+    async deleteResellerItem(id) {
+      if (!IS_PREVIEW && supabase) {
+        const { error } = await supabase.from('resellers').delete().eq('id', id);
+        if (error) {
+          showToast('Gagal menghapus reseller dari Supabase: ' + error.message, 'error');
+          return;
+        }
+      }
+      state.db.resellers = state.db.resellers.filter(x => x.id !== id);
+      persistLocalPreviewOnly();
+      renderDashboard();
+      showToast('Data Reseller berhasil dihapus.');
     },
 
     // POPUP LIHAT DETAIL PESANAN PELANGGAN
@@ -2855,7 +3267,7 @@
       if (!IS_PREVIEW && supabase) {
         const { error } = await supabase.from('themes').upsert(state.db.themes);
         if (error) {
-          showToast('Gagal menyimpan urutan ke Supabase (pastikan SQL sort_order sudah dijalankan): ' + error.message, 'error');
+          showToast('Gagal menyimpan urutan ke Supabase: ' + error.message, 'error');
           return;
         }
       }
@@ -3433,9 +3845,7 @@
       showToast('Kategori Tema berhasil dihapus.');
     },
 
-    // =========================================================================
-    // CRUD TEMA (SINKRON LANGSUNG KE SUPABASE & TIDAK AKAN MUNCUL LAGI JIKA DIHAPUS)
-    // =========================================================================
+    // CRUD TEMA
     editThemeItem(id) {
       const t = state.db.themes.find(x => x.id === id);
       if (!t) return;
