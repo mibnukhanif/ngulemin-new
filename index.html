@@ -92,7 +92,7 @@
       width: 100%;
     }
 
-    /* Animasi Popdown Navbar Mobile */
+    /* Animasi Popdown Navbar Mobile (Landing & Dashboard Admin) */
     .popdown-drawer {
       max-height: 0;
       opacity: 0;
@@ -597,7 +597,7 @@
 
       <div class="p-3.5 rounded-2xl bg-pearl/70 border border-gold/25 text-[11px] text-charcoal/70">
         <p class="font-bold text-charcoal mb-0.5"><i class="fa-solid fa-database text-gold-dark mr-1"></i> Sinkronisasi Supabase</p>
-        <p id="sidebar-admin-email" class="truncate text-charcoal/80 font-medium">Realtime Database & Storage</p>
+        <p id="sidebar-admin-email" class="truncate text-charcoal/80 font-medium">Admin Utama</p>
       </div>
     </aside>
 
@@ -716,7 +716,7 @@
   </div>
 
   <!-- ========================================== -->
-  <!-- MODAL 2: LOGIN ADMIN UTAMA                 -->
+  <!-- MODAL 2: LOGIN ADMIN UTAMA (TANPA DEFAULT) -->
   <!-- ========================================== -->
   <div id="modal-login" class="hidden fixed inset-0 z-50 bg-charcoal/60 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="glass-modal rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl relative">
@@ -827,11 +827,11 @@
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
   // KONFIGURASI APLIKASI PRODUKSI
-  const IS_PREVIEW = false; // Set false untuk menggunakan 100% Database Supabase tanpa data dummy
+  const IS_PREVIEW = false; // Set false untuk Deployment Produksi (Hanya membaca data dari Supabase)
   // PASTE SUPABASE URL & ANON KEY ANDA DI SINI
   const SUPABASE_URL = "https://xocesarpktpfsznyoivz.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_8E0894hvH_S7OHK-0XxeCA_mDIVvV73";
-  const STORAGE_BUCKET = "ngulemin-media";
+  const STORAGE_BUCKET = "ngulemin-media"; // Nama Bucket Penyimpanan Supabase Storage
 
   let supabase = null;
   if (!IS_PREVIEW && SUPABASE_URL.startsWith('http')) {
@@ -854,7 +854,7 @@
     }
   };
 
-  // PENGATURAN DEFAULT IDENTITAS AWAL (HANYA UNTUK TEKS HERO JIKA SITE_SETTINGS BELUM DIISI)
+  // PENGATURAN DEFAULT TEKS HEADER/HOME (HANYA UNTUK FALLBACK TEKS AWAL SITE_SETTINGS)
   const DEFAULT_SITE_SETTINGS = {
     id: 'settings-1',
     brand_name: 'NGULEMIN',
@@ -877,7 +877,7 @@
     footer_text: 'Solusi Undangan Pernikahan Digital Mewah, Elegan & Praktis.'
   };
 
-  // DATA DUMMY KHUSUS MODE UJI COBA (HANYA DIGUNAKAN JIKA IS_PREVIEW = true)
+  // DATA DUMMY KHUSUS MODE PREVIEW (HANYA DIPAKAI JIKA IS_PREVIEW === true)
   const PREVIEW_ONLY_DUMMY_DATA = {
     site_settings: { ...DEFAULT_SITE_SETTINGS },
     social_links: [
@@ -899,16 +899,6 @@
         is_popular: true,
         sort_order: 1,
         created_at: '2026-01-10T08:00:00.000Z'
-      },
-      {
-        id: 'thm-2',
-        title: 'Champagne Gold Luxury',
-        category: 'Luxury Gold',
-        image_url: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=700&q=80',
-        preview_url: 'https://example.com/demo/champagne-gold',
-        is_popular: true,
-        sort_order: 2,
-        created_at: '2026-02-14T08:00:00.000Z'
       }
     ],
     pricing_plans: [
@@ -923,33 +913,17 @@
       }
     ],
     features: [
-      { id: 'ftr-1', icon_name: 'fa-users-viewfinder', title: 'Nama Tamu Unlimited', description: 'Sebar undangan ke ribuan tamu secara personal via WhatsApp.', sort_order: 1 },
-      { id: 'ftr-2', icon_name: 'fa-wallet', title: 'Amplop Digital & Kado', description: 'Tamu dapat mengirimkan tanda kasih langsung ke rekening atau e-wallet.', sort_order: 2 }
+      { id: 'ftr-1', icon_name: 'fa-users-viewfinder', title: 'Nama Tamu Unlimited', description: 'Sebar undangan ke ribuan tamu secara personal via WhatsApp.', sort_order: 1 }
     ],
     testimonials: [
-      { id: 'tst-1', couple_name: 'Rini & Khanif', theme_used: 'Champagne Gold Luxury', rating: 5, comment: 'Desainnya super mewah dan elegan! Admin NGULEMIN juga sangat responsif.' }
+      { id: 'tst-1', couple_name: 'Rini & Khanif', theme_used: 'Champagne Gold Luxury', rating: 5, comment: 'Desainnya super mewah dan elegan!' }
     ],
     order_steps: [
-      { id: 'stp-1', step_number: 1, title: 'Pilih Tema Favorit', description: 'Jelajahi katalog tema NGULEMIN, klik Preview atau klik Pesan.', icon_name: 'fa-palette' },
-      { id: 'stp-2', step_number: 2, title: 'Isi Form Pemesanan', description: 'Lengkapi data mempelai, tanggal akad & resepsi, serta nomor WhatsApp.', icon_name: 'fa-file-signature' }
+      { id: 'stp-1', step_number: 1, title: 'Pilih Tema Favorit', description: 'Jelajahi katalog tema NGULEMIN lalu klik Pesan.', icon_name: 'fa-palette' }
     ],
     faqs: [
-      { id: 'faq-1', question: 'Berapa lama proses pembuatan undangan digital di NGULEMIN?', answer: 'Proses normal memakan waktu 6 hingga 24 jam setelah data dikirimkan.', sort_order: 1 }
+      { id: 'faq-1', question: 'Berapa lama proses pembuatan undangan digital di NGULEMIN?', answer: 'Proses normal memakan waktu 6 hingga 24 jam.', sort_order: 1 }
     ],
-    orders: []
-  };
-
-  // STATE DATABASE KOSONG MURNI UNTUK PRODUKSI (IS_PREVIEW = false)
-  const EMPTY_PRODUCTION_DB = {
-    site_settings: { ...DEFAULT_SITE_SETTINGS },
-    social_links: [],
-    theme_categories: [],
-    themes: [],
-    pricing_plans: [],
-    features: [],
-    testimonials: [],
-    order_steps: [],
-    faqs: [],
     orders: []
   };
 
@@ -999,7 +973,7 @@
     }
   ];
 
-  // STATE APLIKASI UTAMA (JIKA IS_PREVIEW = false, TIDAK ADA DATA DUMMY SAMA SEKALI DI MEMORI AWAL)
+  // STATE APLIKASI UTAMA (SAAT IS_PREVIEW = FALSE, SELURUH DAFTAR DIMULAI KOSONG & MURNI MENGIKUTI SUPABASE)
   const state = {
     currentView: 'landing',
     activeCategory: 'Semua',
@@ -1015,9 +989,21 @@
     nativeDragThemeId: null,
     db: IS_PREVIEW
       ? JSON.parse(JSON.stringify(PREVIEW_ONLY_DUMMY_DATA))
-      : JSON.parse(JSON.stringify(EMPTY_PRODUCTION_DB))
+      : {
+          site_settings: { ...DEFAULT_SITE_SETTINGS },
+          social_links: [],
+          theme_categories: [],
+          themes: [],
+          pricing_plans: [],
+          features: [],
+          testimonials: [],
+          order_steps: [],
+          faqs: [],
+          orders: []
+        }
   };
 
+  // FORMAT RUPIAH & UKURAN FILE
   const formatIDR = (num) => 'Rp ' + Number(num || 0).toLocaleString('id-ID');
   const formatBytes = (bytes) => {
     if (!bytes || bytes === 0) return '0 KB';
@@ -1031,6 +1017,9 @@
       const orderA = Number(a.sort_order ?? 999999);
       const orderB = Number(b.sort_order ?? 999999);
       if (orderA !== orderB) return orderA - orderB;
+      const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+      if (dateA !== dateB) return dateA - dateB;
       return String(a.id).localeCompare(String(b.id));
     });
   };
@@ -1191,12 +1180,11 @@
   };
 
   // =========================================================================
-  // SINKRONISASI DATABASE SUPABASE MURNI (TANPA MEMUNCULKAN DUMMY SAAT KOSONG)
+  // SINKRONISASI MURNI DARI SUPABASE (TANPA MENYUNTIKKAN TEMA DUMMY LAGI)
   // =========================================================================
   async function autoSetupDatabase() {
-    // Jika Mode Preview Aktif (IS_PREVIEW === true)
     if (IS_PREVIEW) {
-      const saved = localStorage.getItem('ngulemin_preview_only_db');
+      const saved = localStorage.getItem('ngulemin_preview_only_v1');
       if (saved) {
         try {
           state.db = JSON.parse(saved);
@@ -1204,11 +1192,13 @@
         } catch (e) {
           state.db = JSON.parse(JSON.stringify(PREVIEW_ONLY_DUMMY_DATA));
         }
+      } else {
+        localStorage.setItem('ngulemin_preview_only_v1', JSON.stringify(state.db));
       }
       return;
     }
 
-    // Jika Mode Produksi (IS_PREVIEW === false), bersihkan semua sisa cache dummy lama di browser
+    // Bersihkan seluruh cache localStorage lama agar data dummy tidak pernah bocor ke mode produksi
     [
       'ngulemin_preview_db_v1',
       'ngulemin_preview_db_v2',
@@ -1221,7 +1211,7 @@
     ].forEach(k => localStorage.removeItem(k));
 
     if (!supabase) {
-      showToast('Harap isi SUPABASE_URL dan SUPABASE_ANON_KEY pada konfigurasi kode!', 'error');
+      showToast('Peringatan: SUPABASE_URL & SUPABASE_ANON_KEY belum dikonfigurasi.', 'error');
       return;
     }
 
@@ -1249,44 +1239,60 @@
         resOrders
       ] = await Promise.all([
         supabase.from('site_settings').select('*').limit(1),
-        supabase.from('social_links').select('*').order('sort_order', { ascending: true }),
-        supabase.from('theme_categories').select('*').order('sort_order', { ascending: true }),
-        supabase.from('themes').select('*').order('sort_order', { ascending: true }).order('created_at', { ascending: true }),
-        supabase.from('pricing_plans').select('*').order('sort_order', { ascending: true }),
-        supabase.from('features').select('*').order('sort_order', { ascending: true }),
-        supabase.from('testimonials').select('*').order('created_at', { ascending: false }),
-        supabase.from('order_steps').select('*').order('step_number', { ascending: true }),
-        supabase.from('faqs').select('*').order('sort_order', { ascending: true }),
+        supabase.from('social_links').select('*'),
+        supabase.from('theme_categories').select('*'),
+        supabase.from('themes').select('*'),
+        supabase.from('pricing_plans').select('*'),
+        supabase.from('features').select('*'),
+        supabase.from('testimonials').select('*'),
+        supabase.from('order_steps').select('*'),
+        supabase.from('faqs').select('*'),
         supabase.from('orders').select('*').order('created_at', { ascending: false })
       ]);
 
-      // 3. Terapkan 100% Sesuai Isi Tabel Supabase (Jika Tabel Kosong -> Array Kosong [], BUKAN Data Dummy!)
-      if (!resSettings.error) {
-        state.db.site_settings = (resSettings.data && resSettings.data.length > 0)
-          ? { ...DEFAULT_SITE_SETTINGS, ...resSettings.data[0] }
-          : { ...DEFAULT_SITE_SETTINGS };
+      // Tetapkan hasil dari Supabase apa adanya (meskipun kosong [] karena sudah dihapus oleh Admin!)
+      if (resSettings.data && resSettings.data.length > 0) {
+        state.db.site_settings = { ...DEFAULT_SITE_SETTINGS, ...resSettings.data[0] };
+      } else if (state.currentUser) {
+        await supabase.from('site_settings').upsert([DEFAULT_SITE_SETTINGS]);
       }
-      if (!resSocials.error) state.db.social_links = resSocials.data || [];
-      if (!resCategories.error) state.db.theme_categories = resCategories.data || [];
-      if (!resThemes.error) {
-        state.db.themes = resThemes.data || [];
-        normalizeThemesSortOrder();
+
+      if (Array.isArray(resSocials.data)) {
+        state.db.social_links = resSocials.data.sort((a, b) => (a.sort_order || 1) - (b.sort_order || 1));
       }
-      if (!resPricing.error) state.db.pricing_plans = resPricing.data || [];
-      if (!resFeatures.error) state.db.features = resFeatures.data || [];
-      if (!resTesti.error) state.db.testimonials = resTesti.data || [];
-      if (!resSteps.error) state.db.order_steps = resSteps.data || [];
-      if (!resFaqs.error) state.db.faqs = resFaqs.data || [];
-      if (!resOrders.error) state.db.orders = resOrders.data || [];
+      if (Array.isArray(resCategories.data)) {
+        state.db.theme_categories = resCategories.data.sort((a, b) => (a.sort_order || 1) - (b.sort_order || 1));
+      }
+      if (Array.isArray(resThemes.data)) {
+        state.db.themes = sortThemesByTableOrder(resThemes.data);
+      }
+      if (Array.isArray(resPricing.data)) {
+        state.db.pricing_plans = resPricing.data.sort((a, b) => (a.sort_order || 1) - (b.sort_order || 1));
+      }
+      if (Array.isArray(resFeatures.data)) {
+        state.db.features = resFeatures.data.sort((a, b) => (a.sort_order || 1) - (b.sort_order || 1));
+      }
+      if (Array.isArray(resTesti.data)) {
+        state.db.testimonials = resTesti.data;
+      }
+      if (Array.isArray(resSteps.data)) {
+        state.db.order_steps = resSteps.data.sort((a, b) => (a.step_number || 1) - (b.step_number || 1));
+      }
+      if (Array.isArray(resFaqs.data)) {
+        state.db.faqs = resFaqs.data.sort((a, b) => (a.sort_order || 1) - (b.sort_order || 1));
+      }
+      if (Array.isArray(resOrders.data)) {
+        state.db.orders = resOrders.data;
+      }
     } catch (err) {
       console.error('Supabase fetch error:', err);
-      showToast('Gagal terhubung ke database Supabase.', 'error');
+      showToast('Gagal memuat data dari Supabase: ' + err.message, 'error');
     }
   }
 
-  const persistLocalFallback = () => {
+  const persistLocalPreviewOnly = () => {
     if (IS_PREVIEW) {
-      localStorage.setItem('ngulemin_preview_only_db', JSON.stringify(state.db));
+      localStorage.setItem('ngulemin_preview_only_v1', JSON.stringify(state.db));
     }
   };
 
@@ -1347,7 +1353,7 @@
     const searchKw = (state.publicThemeSearch || '').toLowerCase().trim();
     let filteredThemes = baseOrderedThemes.filter(t => {
       const matchCat = state.activeCategory === 'Semua' || t.category === state.activeCategory;
-      const matchSearch = !searchKw || t.title.toLowerCase().includes(searchKw) || t.category.toLowerCase().includes(searchKw);
+      const matchSearch = !searchKw || (t.title || '').toLowerCase().includes(searchKw) || (t.category || '').toLowerCase().includes(searchKw);
       const matchPopular = state.publicThemeSort === 'terlaris' ? !!t.is_popular : true;
       return matchCat && matchSearch && matchPopular;
     });
@@ -1370,7 +1376,7 @@
         <div class="glass-card rounded-3xl p-10 text-center max-w-md w-full">
           <i class="fa-solid fa-palette text-3xl text-gold-dark mb-3"></i>
           <h4 class="font-serif text-2xl font-bold text-charcoal">Belum Ada Tema Ditampilkan</h4>
-          <p class="text-xs text-charcoal/70 mt-1">Silakan tambahkan katalog tema melalui Dashboard Admin atau ubah filter pencarian di atas.</p>
+          <p class="text-xs text-charcoal/70 mt-1">Silakan tambahkan tema melalui Dashboard Admin atau ubah filter pencarian di atas.</p>
         </div>
       `;
       return;
@@ -1415,7 +1421,7 @@
     if (!faqContainer) return;
 
     if (state.db.faqs.length === 0) {
-      faqContainer.innerHTML = `<p class="text-center text-xs text-charcoal/50 py-6">Belum ada daftar FAQ.</p>`;
+      faqContainer.innerHTML = `<p class="text-center text-xs text-charcoal/50">Belum ada data FAQ.</p>`;
       return;
     }
 
@@ -1511,7 +1517,7 @@
 
     const pricingGrid = document.getElementById('pricing-grid-container');
     pricingGrid.innerHTML = state.db.pricing_plans.length === 0
-      ? `<p class="text-xs text-charcoal/50 py-6">Belum ada paket harga yang ditambahkan.</p>`
+      ? `<p class="text-xs text-charcoal/50">Belum ada paket harga.</p>`
       : state.db.pricing_plans.map(p => {
           const items = (p.features_list || '').split(',').map(i => i.trim()).filter(Boolean);
           return `
@@ -1541,7 +1547,7 @@
 
     const featuresGrid = document.getElementById('features-grid-container');
     featuresGrid.innerHTML = state.db.features.length === 0
-      ? `<p class="text-xs text-charcoal/50 py-6">Belum ada fitur yang ditambahkan.</p>`
+      ? `<p class="text-xs text-charcoal/50">Belum ada fitur ditampilkan.</p>`
       : state.db.features.map(f => `
           <div class="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.25rem)] max-w-sm glass-card rounded-2xl p-6 hover:border-gold transition-all">
             <div class="w-12 h-12 rounded-2xl gold-gradient text-white flex items-center justify-center text-lg shadow mb-4">
@@ -1554,7 +1560,7 @@
 
     const testiGrid = document.getElementById('testimonials-grid-container');
     testiGrid.innerHTML = state.db.testimonials.length === 0
-      ? `<p class="text-xs text-charcoal/50 py-6">Belum ada testimoni yang ditambahkan.</p>`
+      ? `<p class="text-xs text-charcoal/50">Belum ada testimoni.</p>`
       : state.db.testimonials.map(t => `
           <div class="w-full md:w-[calc(50%-1.25rem)] lg:w-[calc(33.333%-1.5rem)] max-w-sm glass-card rounded-3xl p-6 flex flex-col justify-between">
             <div>
@@ -1565,7 +1571,7 @@
             </div>
             <div class="mt-5 pt-4 border-t border-gold/15 flex items-center gap-3">
               <div class="w-10 h-10 rounded-full bg-gold/20 text-gold-dark font-serif font-bold flex items-center justify-center">
-                ${(t.couple_name || 'N').charAt(0)}
+                ${(t.couple_name || 'P').charAt(0)}
               </div>
               <div>
                 <h4 class="font-serif text-lg font-bold text-charcoal leading-none">${t.couple_name}</h4>
@@ -1577,7 +1583,7 @@
 
     const stepsGrid = document.getElementById('steps-grid-container');
     stepsGrid.innerHTML = state.db.order_steps.length === 0
-      ? `<p class="text-xs text-charcoal/50 py-6">Belum ada langkah cara pemesanan.</p>`
+      ? `<p class="text-xs text-charcoal/50">Belum ada langkah cara pesan.</p>`
       : state.db.order_steps.map(st => `
           <div class="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(25%-1.25rem)] max-w-xs glass-card rounded-3xl p-6 relative text-center flex flex-col justify-between">
             <div>
@@ -1736,7 +1742,7 @@
               </thead>
               <tbody class="divide-y divide-gold/15">
                 ${filteredOrders.length === 0 ? `
-                  <tr><td colspan="9" class="py-8 text-center text-charcoal/50">Belum ada data pesanan masuk di database Supabase.</td></tr>
+                  <tr><td colspan="9" class="py-8 text-center text-charcoal/50">Belum ada data pesanan masuk di database.</td></tr>
                 ` : filteredOrders.map(o => {
                   const akad = o.akad_date || o.wedding_date || '-';
                   const resepsi = o.resepsi_date || o.wedding_date || '-';
@@ -1896,7 +1902,7 @@
 
       const orderedThemes = sortThemesByTableOrder(state.db.themes);
       const filteredAdminThemes = orderedThemes.filter(t => {
-        const matchKw = !kw || t.title.toLowerCase().includes(kw) || t.category.toLowerCase().includes(kw);
+        const matchKw = !kw || (t.title || '').toLowerCase().includes(kw) || (t.category || '').toLowerCase().includes(kw);
         const matchCat = catFilter === 'Semua' || t.category === catFilter;
         return matchKw && matchCat;
       });
@@ -2013,7 +2019,7 @@
               <h3 class="font-serif text-2xl font-bold text-charcoal">Tabel Daftar Katalog Tema (${filteredAdminThemes.length})</h3>
               <p class="text-xs text-charcoal/65">
                 <i class="fa-solid fa-grip-vertical text-gold-dark mr-1"></i>
-                <b>Tahan & Geser (Drag and Drop) simbol <code>⋮⋮</code></b> pada kolom Urutan untuk mengatur posisi tema. Data 100% tersinkron dengan tabel <code>themes</code> di Supabase.
+                <b>Tahan & Geser (Drag and Drop) simbol <code>⋮⋮</code></b> pada kolom Urutan untuk mengatur posisi tema. Urutan di halaman utama akan langsung menyesuaikan secara otomatis!
               </p>
             </div>
             <div class="flex flex-col sm:flex-row gap-2.5">
@@ -2049,7 +2055,7 @@
               </thead>
               <tbody id="admin-themes-tbody" class="divide-y divide-gold/15">
                 ${filteredAdminThemes.length === 0 ? `
-                  <tr><td colspan="7" class="py-8 text-center text-charcoal/50">Tidak ada tema di database Supabase. Silakan tambah tema baru di atas atau import CSV.</td></tr>
+                  <tr><td colspan="7" class="py-8 text-center text-charcoal/50">Tabel tema di database Supabase masih kosong. Silakan tambah tema baru atau import CSV di atas.</td></tr>
                 ` : filteredAdminThemes.map((t, index) => `
                   <tr
                     data-theme-id="${t.id}"
@@ -2138,7 +2144,7 @@
                 </thead>
                 <tbody class="divide-y divide-gold/15">
                   ${state.db.theme_categories.length === 0 ? `
-                    <tr><td colspan="4" class="py-6 text-center text-charcoal/50">Belum ada kategori di database Supabase.</td></tr>
+                    <tr><td colspan="4" class="py-6 text-center text-charcoal/50">Belum ada kategori tema di database.</td></tr>
                   ` : state.db.theme_categories.map(c => {
                     const count = state.db.themes.filter(t => t.category === c.name).length;
                     return `
@@ -2843,18 +2849,18 @@
         }
       });
 
-      persistLocalFallback();
+      persistLocalPreviewOnly();
       renderLandingPage();
 
       if (!IS_PREVIEW && supabase) {
         const { error } = await supabase.from('themes').upsert(state.db.themes);
         if (error) {
-          showToast('Gagal menyimpan urutan ke Supabase: ' + error.message, 'error');
+          showToast('Gagal menyimpan urutan ke Supabase (pastikan SQL sort_order sudah dijalankan): ' + error.message, 'error');
           return;
         }
       }
 
-      showToast('Urutan katalog tema berhasil diperbarui di Supabase & halaman utama!');
+      showToast('Urutan katalog tema berhasil disimpan ke Supabase & disinkronkan!');
     },
 
     // DOWNLOAD TEMPLATE CSV & IMPORT DATA TEMA MASSAL
@@ -2948,13 +2954,13 @@
           }
           const { error } = await supabase.from('themes').upsert(importedThemes);
           if (error) {
-            showToast('Gagal mengimport tema ke Supabase: ' + error.message, 'error');
+            showToast('Gagal menyimpan CSV ke Supabase: ' + error.message, 'error');
             return;
           }
         }
 
         state.db.themes.push(...importedThemes);
-        persistLocalFallback();
+        persistLocalPreviewOnly();
         renderLandingPage();
         renderDashboard();
         showToast(`Berhasil mengimport ${importedThemes.length} tema baru ke Supabase!`);
@@ -2970,7 +2976,7 @@
       const orderedThemes = sortThemesByTableOrder(state.db.themes);
       themeSelect.innerHTML = orderedThemes.length > 0
         ? orderedThemes.map(t => `<option value="${t.id}" ${themeId === t.id ? 'selected' : ''}>${t.title}</option>`).join('')
-        : `<option value="">Belum ada pilihan tema</option>`;
+        : `<option value="custom">Tema Custom</option>`;
 
       pkgSelect.innerHTML = state.db.pricing_plans.length > 0
         ? state.db.pricing_plans.map(p => `<option value="${p.plan_name}" ${packageName === p.plan_name ? 'selected' : ''}>${p.plan_name} — ${formatIDR(p.price)}</option>`).join('')
@@ -2995,8 +3001,8 @@
       e.preventDefault();
       const themeId = document.getElementById('order-theme-select').value;
       const pkgName = document.getElementById('order-package-select').value;
-      const themeObj = state.db.themes.find(t => t.id === themeId) || state.db.themes[0] || { id: 'thm-custom', title: 'Custom' };
-      const pkgObj = state.db.pricing_plans.find(p => p.plan_name === pkgName) || state.db.pricing_plans[0] || { plan_name: 'Paket Standar', price: 0 };
+      const themeObj = state.db.themes.find(t => t.id === themeId) || state.db.themes[0] || { id: 'thm-0', title: 'Custom' };
+      const pkgObj = state.db.pricing_plans.find(p => p.plan_name === pkgName) || state.db.pricing_plans[0] || { plan_name: 'Regular', price: 0 };
       const totalPrice = Number(pkgObj.price || 0);
 
       if (!IS_PREVIEW && supabase) {
@@ -3042,7 +3048,7 @@
       }
 
       state.db.orders.unshift(newOrder);
-      persistLocalFallback();
+      persistLocalPreviewOnly();
       this.closeOrderModal();
       document.getElementById('form-create-order').reset();
       showToast(`Pesanan ${orderCode} berhasil dibuat!`);
@@ -3064,7 +3070,7 @@
       window.open(`https://wa.me/${waAdmin}?text=${waText}`, '_blank');
     },
 
-    // LOGIN ADMIN UTAMA
+    // LOGIN ADMIN UTAMA (MURNI SUPABASE AUTH TANPA AKUN DEFAULT)
     openLoginModal() {
       if (state.currentUser) {
         this.switchView('dashboard');
@@ -3083,14 +3089,6 @@
       const inputEmail = document.getElementById('login-admin-email').value.trim();
       const inputPass = document.getElementById('login-admin-password').value.trim();
       const submitBtn = document.getElementById('btn-submit-login');
-
-      if (IS_PREVIEW) {
-        state.currentUser = { role: 'admin', data: { email: inputEmail } };
-        this.closeLoginModal();
-        this.switchView('dashboard');
-        showToast('Masuk ke Mode Preview!');
-        return;
-      }
 
       if (!supabase) {
         showToast('Konfigurasi SUPABASE_URL & SUPABASE_ANON_KEY belum diisi!', 'error');
@@ -3176,13 +3174,12 @@
     },
 
     // ==========================================
-    // CRUD OPERATIONS (LANGSUNG SINKRON SUPABASE)
+    // CRUD OPERATIONS LANGSUNG KE SUPABASE
     // ==========================================
     async saveHomeSectionSettings(e) {
       e.preventDefault();
       const updated = {
         ...state.db.site_settings,
-        id: state.db.site_settings.id || 'settings-1',
         hero_badge: document.getElementById('home-badge').value.trim(),
         hero_title: document.getElementById('home-title').value.trim(),
         hero_subtitle: document.getElementById('home-subtitle').value.trim(),
@@ -3203,16 +3200,15 @@
         }
       }
       state.db.site_settings = updated;
-      persistLocalFallback();
+      persistLocalPreviewOnly();
       renderLandingPage();
-      showToast('Konten Home, Gambar Hero & Statistik berhasil disimpan ke Supabase!');
+      showToast('Konten Home, Gambar Hero & Statistik berhasil diperbarui!');
     },
 
     async saveSystemSettings(e) {
       e.preventDefault();
       const updated = {
         ...state.db.site_settings,
-        id: state.db.site_settings.id || 'settings-1',
         brand_name: document.getElementById('sys-brand').value.trim(),
         brand_tagline: document.getElementById('sys-tagline').value.trim(),
         logo_url: document.getElementById('sys-logo').value.trim(),
@@ -3230,11 +3226,11 @@
         }
       }
       state.db.site_settings = updated;
-      persistLocalFallback();
+      persistLocalPreviewOnly();
       renderLogoElements();
       renderLandingPage();
       renderDashboard();
-      showToast('Logo Website & Pengaturan Sistem berhasil disimpan ke Supabase!');
+      showToast('Logo Website & Pengaturan Sistem berhasil diterapkan!');
     },
 
     // CRUD MEDIA SOSIAL FOOTER
@@ -3277,7 +3273,7 @@
       if (existingIdx >= 0) state.db.social_links[existingIdx] = item;
       else state.db.social_links.push(item);
 
-      persistLocalFallback();
+      persistLocalPreviewOnly();
       renderLandingPage();
       renderDashboard();
       showToast('Media Sosial Footer berhasil disimpan!');
@@ -3292,10 +3288,10 @@
         }
       }
       state.db.social_links = state.db.social_links.filter(x => x.id !== id);
-      persistLocalFallback();
+      persistLocalPreviewOnly();
       renderLandingPage();
       renderDashboard();
-      showToast('Media Sosial berhasil dihapus dari Supabase.');
+      showToast('Media Sosial berhasil dihapus dari Footer.');
     },
 
     // UPDATE EMAIL & PASSWORD ADMIN LANGSUNG KE SUPABASE AUTH
@@ -3348,8 +3344,8 @@
         }
       }
       state.db.orders[idx].status = statusVal;
-      persistLocalFallback();
-      showToast('Status pesanan berhasil diperbarui di Supabase!');
+      persistLocalPreviewOnly();
+      showToast('Status pesanan berhasil diperbarui!');
     },
 
     async deleteOrderRow(id) {
@@ -3361,9 +3357,9 @@
         }
       }
       state.db.orders = state.db.orders.filter(o => o.id !== id);
-      persistLocalFallback();
+      persistLocalPreviewOnly();
       renderDashboard();
-      showToast('Data pesanan berhasil dihapus secara permanen dari Supabase.');
+      showToast('Data pesanan berhasil dihapus.');
     },
 
     // CRUD KATEGORI TEMA
@@ -3400,7 +3396,7 @@
       if (!IS_PREVIEW && supabase) {
         const { error } = await supabase.from('theme_categories').upsert([item]);
         if (error) {
-          showToast('Gagal menyimpan kategori ke Supabase: ' + error.message, 'error');
+          showToast('Gagal menyimpan kategori: ' + error.message, 'error');
           return;
         }
       }
@@ -3416,10 +3412,10 @@
         state.db.theme_categories.push(item);
       }
 
-      persistLocalFallback();
+      persistLocalPreviewOnly();
       renderLandingPage();
       renderDashboard();
-      showToast('Kategori Tema berhasil disimpan ke Supabase!');
+      showToast('Kategori Tema berhasil disimpan!');
     },
 
     async deleteCategoryItem(id) {
@@ -3431,14 +3427,14 @@
         }
       }
       state.db.theme_categories = state.db.theme_categories.filter(x => x.id !== id);
-      persistLocalFallback();
+      persistLocalPreviewOnly();
       renderLandingPage();
       renderDashboard();
-      showToast('Kategori Tema berhasil dihapus dari Supabase.');
+      showToast('Kategori Tema berhasil dihapus.');
     },
 
     // =========================================================================
-    // CRUD TEMA (100% MURNI SUPABASE & TIDAK AKAN MUNCUL LAGI SETELAH DIHAPUS)
+    // CRUD TEMA (SINKRON LANGSUNG KE SUPABASE & TIDAK AKAN MUNCUL LAGI JIKA DIHAPUS)
     // =========================================================================
     editThemeItem(id) {
       const t = state.db.themes.find(x => x.id === id);
@@ -3511,7 +3507,7 @@
       }
 
       normalizeThemesSortOrder();
-      persistLocalFallback();
+      persistLocalPreviewOnly();
       this.resetThemeForm();
       renderLandingPage();
       renderDashboard();
@@ -3530,15 +3526,14 @@
       state.db.themes = state.db.themes.filter(x => x.id !== id);
       normalizeThemesSortOrder();
 
-      // Perbarui urutan tema yang tersisa di Supabase
       if (!IS_PREVIEW && supabase && state.db.themes.length > 0) {
         await supabase.from('themes').upsert(state.db.themes);
       }
 
-      persistLocalFallback();
+      persistLocalPreviewOnly();
       renderLandingPage();
       renderDashboard();
-      showToast('Tema berhasil dihapus permanen dari database Supabase!');
+      showToast('Tema berhasil dihapus secara permanen dari Supabase!');
     },
 
     // CRUD HARGA
@@ -3578,10 +3573,10 @@
       if (idx >= 0) state.db.pricing_plans[idx] = item;
       else state.db.pricing_plans.push(item);
 
-      persistLocalFallback();
+      persistLocalPreviewOnly();
       renderLandingPage();
       renderDashboard();
-      showToast('Paket Harga disimpan ke Supabase!');
+      showToast('Paket Harga disimpan!');
     },
 
     async deletePricingItem(id) {
@@ -3593,10 +3588,10 @@
         }
       }
       state.db.pricing_plans = state.db.pricing_plans.filter(x => x.id !== id);
-      persistLocalFallback();
+      persistLocalPreviewOnly();
       renderLandingPage();
       renderDashboard();
-      showToast('Paket Harga berhasil dihapus dari Supabase.');
+      showToast('Paket Harga berhasil dihapus.');
     },
 
     // CRUD FITUR
@@ -3632,10 +3627,10 @@
       if (idx >= 0) state.db.features[idx] = item;
       else state.db.features.push(item);
 
-      persistLocalFallback();
+      persistLocalPreviewOnly();
       renderLandingPage();
       renderDashboard();
-      showToast('Fitur berhasil disimpan ke Supabase!');
+      showToast('Fitur berhasil disimpan!');
     },
 
     async deleteFeatureItem(id) {
@@ -3647,10 +3642,10 @@
         }
       }
       state.db.features = state.db.features.filter(x => x.id !== id);
-      persistLocalFallback();
+      persistLocalPreviewOnly();
       renderLandingPage();
       renderDashboard();
-      showToast('Fitur berhasil dihapus dari Supabase.');
+      showToast('Fitur berhasil dihapus.');
     },
 
     // CRUD TESTIMONI
@@ -3686,10 +3681,10 @@
       if (idx >= 0) state.db.testimonials[idx] = item;
       else state.db.testimonials.push(item);
 
-      persistLocalFallback();
+      persistLocalPreviewOnly();
       renderLandingPage();
       renderDashboard();
-      showToast('Testimoni disimpan ke Supabase!');
+      showToast('Testimoni disimpan!');
     },
 
     async deleteTestiItem(id) {
@@ -3701,10 +3696,10 @@
         }
       }
       state.db.testimonials = state.db.testimonials.filter(x => x.id !== id);
-      persistLocalFallback();
+      persistLocalPreviewOnly();
       renderLandingPage();
       renderDashboard();
-      showToast('Testimoni berhasil dihapus dari Supabase.');
+      showToast('Testimoni berhasil dihapus.');
     },
 
     // CRUD CARA PESAN
@@ -3731,7 +3726,7 @@
       if (!IS_PREVIEW && supabase) {
         const { error } = await supabase.from('order_steps').upsert([item]);
         if (error) {
-          showToast('Gagal menyimpan langkah: ' + error.message, 'error');
+          showToast('Gagal menyimpan langkah cara pesan: ' + error.message, 'error');
           return;
         }
       }
@@ -3741,10 +3736,10 @@
       else state.db.order_steps.push(item);
       state.db.order_steps.sort((a, b) => a.step_number - b.step_number);
 
-      persistLocalFallback();
+      persistLocalPreviewOnly();
       renderLandingPage();
       renderDashboard();
-      showToast('Langkah Cara Pesan disimpan ke Supabase!');
+      showToast('Langkah Cara Pesan disimpan!');
     },
 
     async deleteStepItem(id) {
@@ -3756,10 +3751,10 @@
         }
       }
       state.db.order_steps = state.db.order_steps.filter(x => x.id !== id);
-      persistLocalFallback();
+      persistLocalPreviewOnly();
       renderLandingPage();
       renderDashboard();
-      showToast('Langkah Cara Pesan berhasil dihapus dari Supabase.');
+      showToast('Langkah Cara Pesan berhasil dihapus.');
     },
 
     // CRUD FAQ
@@ -3793,10 +3788,10 @@
       if (idx >= 0) state.db.faqs[idx] = item;
       else state.db.faqs.push(item);
 
-      persistLocalFallback();
+      persistLocalPreviewOnly();
       renderLandingPage();
       renderDashboard();
-      showToast('FAQ berhasil disimpan ke Supabase!');
+      showToast('FAQ berhasil disimpan!');
     },
 
     async deleteFaqItem(id) {
@@ -3808,7 +3803,19 @@
         }
       }
       state.db.faqs = state.db.faqs.filter(x => x.id !== id);
-      persistLocalFallback();
+      persistLocalPreviewOnly();
       renderLandingPage();
       renderDashboard();
-      showToast('FAQ berhasil dihapus dari Supabase.');
+      showToast('FAQ berhasil dihapus.');
+    }
+  };
+
+  // INISIALISASI SAAT HALAMAN DIMUAT
+  window.addEventListener('DOMContentLoaded', async () => {
+    initPWA();
+    await autoSetupDatabase();
+    renderLandingPage();
+  });
+</script>
+</body>
+</html>
