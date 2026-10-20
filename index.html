@@ -14,9 +14,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Tailwind CSS & FontAwesome -->
+  <!-- Tailwind CSS, FontAwesome & SortableJS (Untuk Drag & Drop Mulus di Desktop & HP) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 
   <script>
     tailwind.config = {
@@ -124,6 +125,24 @@
       transform: rotate(180deg);
       background-color: #C5A059;
       color: #ffffff;
+    }
+
+    /* Gaya Visual Saat Baris Tabel Tema Di-Drag & Drop */
+    .sortable-ghost {
+      background-color: rgba(197, 160, 89, 0.18) !important;
+      border: 2px dashed #C5A059 !important;
+      opacity: 0.85;
+    }
+    .sortable-chosen {
+      background-color: #FAF8F5 !important;
+      box-shadow: 0 12px 28px -6px rgba(44, 42, 41, 0.18) !important;
+    }
+    .theme-drag-handle {
+      cursor: grab;
+      touch-action: none;
+    }
+    .theme-drag-handle:active {
+      cursor: grabbing;
     }
 
     /* Custom Scrollbar */
@@ -802,7 +821,7 @@
 </div>
 
 <!-- ========================================================= -->
-<!-- MAIN APPLICATION MODULE (SUPABASE STORAGE + AUTO COMPRESS)-->
+<!-- MAIN APPLICATION MODULE (DRAG & DROP + SUPABASE STORAGE)  -->
 <!-- ========================================================= -->
 <script type="module">
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
@@ -818,6 +837,8 @@
   if (!IS_PREVIEW && SUPABASE_URL.startsWith('http')) {
     supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   }
+
+  let themeSortableInstance = null;
 
   // REGISTRASI DYNAMIC SERVICE WORKER (PWA 1 FILE)
   const initPWA = () => {
@@ -1006,7 +1027,7 @@
       id: 'themes',
       icon: 'fa-palette',
       label: 'Tema',
-      desc: 'Kelola katalog tema, urutan tampil tema, upload gambar otomatis terkompres ke Supabase Storage, & import CSV.'
+      desc: 'Kelola katalog tema, ubah urutan tampil dengan Drag & Drop simbol (⋮⋮), upload gambar ke Supabase Storage, & import CSV.'
     },
     {
       id: 'categories',
@@ -1039,7 +1060,7 @@
     currentView: 'landing', // 'landing' | 'dashboard'
     activeCategory: 'Semua',
     publicThemeSearch: '',
-    publicThemeSort: 'urutan_tabel', // Default mengikuti urutan Tabel Daftar Katalog Tema di Dashboard
+    publicThemeSort: 'urutan_tabel', // Default mengikuti urutan Drag & Drop Tabel Katalog Tema di Dashboard
     currentUser: null,
     activeDashTab: 'orders',
     adminOrderSearch: '',
@@ -1047,6 +1068,7 @@
     adminThemeCategoryFilter: 'Semua',
     openFaqIndex: 0,
     pendingDeleteCallback: null,
+    nativeDragThemeId: null,
     db: JSON.parse(JSON.stringify(INITIAL_CONTENT_DATA))
   };
 
@@ -1061,8 +1083,8 @@
   // HELPER PENGURUTAN TEMA KONSISTEN BERDASARKAN SORT_ORDER TABEL DASHBOARD
   const sortThemesByTableOrder = (themesArray) => {
     return [...themesArray].sort((a, b) => {
-      const orderA = typeof a.sort_order === 'number' ? a.sort_order : 999999;
-      const orderB = typeof b.sort_order === 'number' ? b.sort_order : 999999;
+      const orderA = Number(a.sort_order ?? 999999);
+      const orderB = Number(b.sort_order ?? 999999);
       if (orderA !== orderB) return orderA - orderB;
       return String(a.id).localeCompare(String(b.id));
     });
@@ -1081,7 +1103,6 @@
   // =========================================================================
   const compressImageFile = (file, { maxWidth = 1080, maxHeight = 1080, quality = 0.86, forceSquare = false } = {}) => {
     return new Promise((resolve, reject) => {
-      // Jika file SVG, tidak perlu digambar ke canvas agar vektor tetap tajam
       if (file.type === 'image/svg+xml') {
         const reader = new FileReader();
         reader.onload = (e) => resolve({ blob: file, dataUrl: e.target.result, ext: 'svg', contentType: 'image/svg+xml' });
@@ -1103,7 +1124,6 @@
         let targetHeight = img.height;
 
         if (forceSquare) {
-          // Center Crop 1:1 Presisi
           const minSide = Math.min(img.width, img.height);
           sx = (img.width - minSide) / 2;
           sy = (img.height - minSide) / 2;
@@ -1113,7 +1133,6 @@
           targetWidth = outSide;
           targetHeight = outSide;
         } else {
-          // Pertahankan rasio asli dengan batas dimensi maksimum
           if (targetWidth > maxWidth || targetHeight > maxHeight) {
             const ratio = Math.min(maxWidth / targetWidth, maxHeight / targetHeight);
             targetWidth = Math.round(targetWidth * ratio);
@@ -1163,7 +1182,6 @@
     const compressed = await compressImageFile(file, compressOptions);
     const compressedSize = compressed.blob.size;
 
-    // Jika Supabase aktif, unggah langsung ke Supabase Storage Bucket
     if (!IS_PREVIEW && supabase) {
       const safeName = (file.name || 'image')
         .replace(/\.[^/.]+$/, '')
@@ -1230,7 +1248,7 @@
   // AUTO SETUP DATABASE & CEK SESI LOGIN SUPABASE AUTH
   async function autoSetupDatabase() {
     if (IS_PREVIEW || !supabase) {
-      const saved = localStorage.getItem('ngulemin_prod_fallback_v2');
+      const saved = localStorage.getItem('ngulemin_prod_fallback_v3');
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
@@ -1316,7 +1334,7 @@
   }
 
   const persistLocalFallback = () => {
-    localStorage.setItem('ngulemin_prod_fallback_v2', JSON.stringify(state.db));
+    localStorage.setItem('ngulemin_prod_fallback_v3', JSON.stringify(state.db));
   };
 
   // RENDER LOGO OTOMATIS DI SEMUA TEMPAT
@@ -1351,7 +1369,7 @@
   };
 
   // ==========================================
-  // RENDER KATALOG TEMA DI LANDING PAGE (MENGIKUTI URUTAN TABEL DASHBOARD)
+  // RENDER KATALOG TEMA DI LANDING PAGE (100% MENGIKUTI URUTAN TABEL DASHBOARD)
   // ==========================================
   const renderPublicThemesCatalog = () => {
     const catNamesFromSettings = state.db.theme_categories.map(c => c.name);
@@ -1371,7 +1389,7 @@
       sortSelectEl.value = state.publicThemeSort;
     }
 
-    // Urutkan dasar berdasarkan urutan Tabel Katalog Tema di Dashboard (sort_order ASC)
+    // Urutan dasar: 100% mengikuti sort_order hasil Drag & Drop di Tabel Dashboard
     const baseOrderedThemes = sortThemesByTableOrder(state.db.themes);
 
     const searchKw = (state.publicThemeSearch || '').toLowerCase().trim();
@@ -1389,7 +1407,6 @@
         return dateB - dateA;
       });
     } else if (state.publicThemeSort === 'terlaris') {
-      // Tetap mengikuti urutan tabel di antara tema-tema terlaris
       filteredThemes = sortThemesByTableOrder(filteredThemes);
     }
 
@@ -1612,6 +1629,31 @@
     renderFooterSection();
   };
 
+  // =========================================================
+  // INISIALISASI DRAG & DROP TABEL TEMA (DESKTOP & MOBILE)
+  // =========================================================
+  const initAdminThemeSortable = () => {
+    const tbody = document.getElementById('admin-themes-tbody');
+    if (!tbody) return;
+
+    if (themeSortableInstance) {
+      themeSortableInstance.destroy();
+      themeSortableInstance = null;
+    }
+
+    if (typeof window.Sortable !== 'undefined') {
+      themeSortableInstance = window.Sortable.create(tbody, {
+        handle: '.theme-drag-handle',
+        animation: 200,
+        ghostClass: 'sortable-ghost',
+        chosenClass: 'sortable-chosen',
+        onEnd: () => {
+          window.app.syncThemeOrderFromDom();
+        }
+      });
+    }
+  };
+
   // ==========================================
   // RENDER DASHBOARD ADMIN UTAMA
   // ==========================================
@@ -1812,7 +1854,6 @@
               <textarea id="home-subtitle" rows="3" required class="w-full px-3.5 py-2.5 rounded-xl border border-gold/40 bg-white">${s.hero_subtitle}</textarea>
             </div>
 
-            <!-- Upload Gambar Banner Hero ke Supabase Storage dengan Auto-Compress -->
             <div class="p-4 rounded-2xl bg-pearl/70 border border-gold/30 flex flex-col sm:flex-row items-center gap-4">
               <img id="home-hero-preview-img" src="${s.hero_image}" alt="Preview Hero" class="w-24 h-24 aspect-square object-cover rounded-2xl border border-gold/40 shadow-sm shrink-0 bg-white" />
               <div class="flex-1 w-full space-y-2">
@@ -1883,7 +1924,7 @@
       `;
     }
 
-    // 3. MENU TEMA (URUTAN TABEL KONSISTEN + AUTO COMPRESS KE SUPABASE STORAGE)
+    // 3. MENU TEMA (FITUR GESER DRAG & DROP DENGAN SIMBOL GRIP ⋮⋮)
     if (tab === 'themes') {
       const kw = (state.adminThemeSearch || '').toLowerCase();
       const catFilter = state.adminThemeCategoryFilter || 'Semua';
@@ -2003,7 +2044,10 @@
           <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
             <div>
               <h3 class="font-serif text-2xl font-bold text-charcoal">Tabel Daftar Katalog Tema (${filteredAdminThemes.length})</h3>
-              <p class="text-xs text-charcoal/65">Urutan pada tabel ini adalah urutan resmi yang tampil di halaman utama website dan tidak berubah saat diedit atau direfresh.</p>
+              <p class="text-xs text-charcoal/65">
+                <i class="fa-solid fa-grip-vertical text-gold-dark mr-1"></i>
+                <b>Tahan & Geser (Drag and Drop) simbol <code>⋮⋮</code></b> pada kolom Urutan untuk mengatur posisi tema. Urutan di halaman utama akan langsung menyesuaikan secara otomatis!
+              </p>
             </div>
             <div class="flex flex-col sm:flex-row gap-2.5">
               <div class="relative">
@@ -2026,8 +2070,8 @@
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs sm:text-sm">
               <thead>
-                <tr class="border-b border-gold/25 text-charcoal/70 uppercase text-[11px]">
-                  <th class="py-3 px-2.5 text-center">Urutan</th>
+                <tr class="border-b border-gold/25 text-charcoal/70 uppercase text-[11px] bg-pearl/40">
+                  <th class="py-3 px-2.5 text-center w-24">Urutan (Geser)</th>
                   <th class="py-3 px-2.5">Gambar (1:1)</th>
                   <th class="py-3 px-2.5">Judul Tema</th>
                   <th class="py-3 px-2.5">Kategori</th>
@@ -2036,26 +2080,29 @@
                   <th class="py-3 px-2.5 text-right">Aksi</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-gold/15">
+              <tbody id="admin-themes-tbody" class="divide-y divide-gold/15">
                 ${filteredAdminThemes.length === 0 ? `
                   <tr><td colspan="7" class="py-8 text-center text-charcoal/50">Tidak ada tema yang ditemukan.</td></tr>
                 ` : filteredAdminThemes.map((t, index) => `
-                  <tr class="hover:bg-gold/5 transition-colors">
+                  <tr
+                    data-theme-id="${t.id}"
+                    draggable="true"
+                    ondragstart="window.app.handleNativeDragStart(event, '${t.id}')"
+                    ondragover="window.app.handleNativeDragOver(event)"
+                    ondrop="window.app.handleNativeDrop(event, '${t.id}')"
+                    class="hover:bg-gold/5 transition-colors bg-white/60"
+                  >
                     <td class="py-3 px-2.5 text-center whitespace-nowrap">
-                      <div class="inline-flex items-center gap-1 bg-pearl/80 px-2 py-1 rounded-xl border border-gold/25">
-                        <span class="font-bold text-gold-dark text-xs w-5 text-center">#${t.sort_order || (index + 1)}</span>
-                        <div class="flex flex-col gap-0.5">
-                          <button type="button" onclick="window.app.moveThemeOrder('${t.id}', 'up')" title="Geser Naik" class="px-1.5 py-0.5 rounded bg-white hover:bg-gold/20 text-[10px] leading-none text-charcoal">
-                            <i class="fa-solid fa-chevron-up"></i>
-                          </button>
-                          <button type="button" onclick="window.app.moveThemeOrder('${t.id}', 'down')" title="Geser Turun" class="px-1.5 py-0.5 rounded bg-white hover:bg-gold/20 text-[10px] leading-none text-charcoal">
-                            <i class="fa-solid fa-chevron-down"></i>
-                          </button>
-                        </div>
+                      <div
+                        class="theme-drag-handle inline-flex items-center gap-2 bg-pearl hover:bg-gold/20 px-3 py-1.5 rounded-xl border border-gold/35 shadow-sm select-none transition-colors"
+                        title="Tahan & Geser (Drag and Drop) untuk mengubah urutan"
+                      >
+                        <i class="fa-solid fa-grip-vertical text-gold-dark text-sm"></i>
+                        <span class="theme-order-badge font-bold text-charcoal text-xs">#${t.sort_order || (index + 1)}</span>
                       </div>
                     </td>
                     <td class="py-3 px-2.5">
-                      <img src="${t.image_url}" loading="lazy" alt="${t.title}" class="w-14 h-14 aspect-square object-cover rounded-xl border border-gold/30" />
+                      <img src="${t.image_url}" loading="lazy" alt="${t.title}" class="w-14 h-14 aspect-square object-cover rounded-xl border border-gold/30 pointer-events-none" />
                     </td>
                     <td class="py-3 px-2.5 font-serif text-lg font-bold text-charcoal">${t.title}</td>
                     <td class="py-3 px-2.5">
@@ -2081,6 +2128,9 @@
           </div>
         </div>
       `;
+
+      // Aktifkan Drag & Drop pada Tabel Katalog Tema
+      initAdminThemeSortable();
     }
 
     // 4. MENU KATEGORI
@@ -2291,7 +2341,7 @@
       `;
     }
 
-    // 7. MENU PENGATURAN SISTEM (UPLOAD LOGO KE SUPABASE STORAGE + AUTO COMPRESS)
+    // 7. MENU PENGATURAN SISTEM
     if (tab === 'system') {
       const s = state.db.site_settings;
       const currentAdminEmail = state.currentUser?.data?.email || '';
@@ -2694,7 +2744,7 @@
           maxWidth: 900,
           maxHeight: 900,
           quality: 0.86,
-          forceSquare: true // Otomatis crop 1:1 presisi dan jernih
+          forceSquare: true
         });
         const inputEl = document.getElementById('thm-img');
         if (inputEl) inputEl.value = finalUrl;
@@ -2742,6 +2792,109 @@
       if (previewBox) {
         previewBox.innerHTML = `<i class="fa-solid fa-rings-wedding"></i>`;
       }
+    },
+
+    // =========================================================================
+    // ENGINE DRAG AND DROP URUTAN TEMA (SINKRON KE HALAMAN UTAMA & SUPABASE)
+    // =========================================================================
+    handleNativeDragStart(event, themeId) {
+      // Fallback jika SortableJS tidak aktif
+      if (typeof window.Sortable !== 'undefined') return;
+      state.nativeDragThemeId = themeId;
+      event.dataTransfer.effectAllowed = 'move';
+    },
+
+    handleNativeDragOver(event) {
+      if (typeof window.Sortable !== 'undefined') return;
+      event.preventDefault();
+      event.dataTransfer.dropEffect = 'move';
+    },
+
+    handleNativeDrop(event, targetThemeId) {
+      if (typeof window.Sortable !== 'undefined') return;
+      event.preventDefault();
+      const sourceId = state.nativeDragThemeId;
+      state.nativeDragThemeId = null;
+      if (!sourceId || sourceId === targetThemeId) return;
+
+      const tbody = document.getElementById('admin-themes-tbody');
+      if (!tbody) return;
+      const sourceRow = tbody.querySelector(`tr[data-theme-id="${sourceId}"]`);
+      const targetRow = tbody.querySelector(`tr[data-theme-id="${targetThemeId}"]`);
+      if (!sourceRow || !targetRow) return;
+
+      const rows = Array.from(tbody.querySelectorAll('tr[data-theme-id]'));
+      const sourceIdx = rows.indexOf(sourceRow);
+      const targetIdx = rows.indexOf(targetRow);
+      if (sourceIdx < targetIdx) {
+        targetRow.after(sourceRow);
+      } else {
+        targetRow.before(sourceRow);
+      }
+      this.syncThemeOrderFromDom();
+    },
+
+    async syncThemeOrderFromDom() {
+      const tbody = document.getElementById('admin-themes-tbody');
+      if (!tbody) return;
+
+      const domRows = Array.from(tbody.querySelectorAll('tr[data-theme-id]'));
+      if (domRows.length === 0) return;
+
+      const domIds = domRows.map(r => r.getAttribute('data-theme-id'));
+
+      // Urutkan daftar lengkap state.db.themes terlebih dahulu
+      const fullSorted = sortThemesByTableOrder(state.db.themes);
+
+      // Ambil posisi slot dari item yang sedang tampil di tabel (mendukung saat tabel difilter maupun penuh)
+      const visibleSlotIndices = [];
+      fullSorted.forEach((t, idx) => {
+        if (domIds.includes(t.id)) {
+          visibleSlotIndices.push(idx);
+        }
+      });
+
+      const reorderedVisibleThemes = domIds
+        .map(id => fullSorted.find(t => t.id === id))
+        .filter(Boolean);
+
+      visibleSlotIndices.forEach((slotIdx, i) => {
+        if (reorderedVisibleThemes[i]) {
+          fullSorted[slotIdx] = reorderedVisibleThemes[i];
+        }
+      });
+
+      // Tetapkan nomor sort_order baru secara berurutan (1, 2, 3...)
+      fullSorted.forEach((t, index) => {
+        t.sort_order = index + 1;
+      });
+
+      state.db.themes = fullSorted;
+
+      // Perbarui label nomor urut (#1, #2, ...) langsung di baris tabel tanpa berkedip
+      domRows.forEach((row) => {
+        const rowId = row.getAttribute('data-theme-id');
+        const themeObj = state.db.themes.find(t => t.id === rowId);
+        const badgeEl = row.querySelector('.theme-order-badge');
+        if (badgeEl && themeObj) {
+          badgeEl.textContent = `#${themeObj.sort_order}`;
+        }
+      });
+
+      // Simpan ke Local Fallback & Perbarui Halaman Utama Website Seketika
+      persistLocalFallback();
+      renderLandingPage();
+
+      // Simpan Permanen ke Database Supabase
+      if (!IS_PREVIEW && supabase) {
+        const { error } = await supabase.from('themes').upsert(state.db.themes);
+        if (error) {
+          showToast('Gagal menyimpan urutan ke Supabase: ' + error.message, 'error');
+          return;
+        }
+      }
+
+      showToast('Urutan katalog tema berhasil diperbarui & disinkronkan ke halaman utama!');
     },
 
     // DOWNLOAD TEMPLATE CSV & IMPORT DATA TEMA MASSAL
@@ -3286,7 +3439,7 @@
     },
 
     // =========================================================================
-    // CRUD TEMA & PENGATURAN URUTAN PERMANEN (TIDAK BERUBAH SAAT DIEDIT/REFRESH)
+    // CRUD TEMA (POSISI URUTAN TETAP TERKUNCI SAAT DIEDIT / REFRESH)
     // =========================================================================
     editThemeItem(id) {
       const t = state.db.themes.find(x => x.id === id);
@@ -3325,7 +3478,6 @@
       const id = document.getElementById('thm-id').value || ('thm-' + Date.now());
       const existingIdx = state.db.themes.findIndex(x => x.id === id);
 
-      // Pertahankan sort_order dan created_at asli jika sedang mengedit agar posisi di tabel & website tidak berubah!
       const preservedSortOrder = existingIdx >= 0
         ? state.db.themes[existingIdx].sort_order
         : state.db.themes.length + 1;
@@ -3354,7 +3506,7 @@
       normalizeThemesSortOrder();
 
       if (!IS_PREVIEW && supabase) {
-        const { error } = await supabase.from('themes').upsert([item]);
+        const { error } = await supabase.from('themes').upsert(state.db.themes);
         if (error) {
           showToast('Gagal menyimpan tema ke Supabase: ' + error.message, 'error');
           return;
@@ -3366,37 +3518,6 @@
       renderLandingPage();
       renderDashboard();
       showToast('Katalog Tema berhasil disimpan (posisi urutan tetap terjaga)!');
-    },
-
-    async moveThemeOrder(themeId, direction) {
-      normalizeThemesSortOrder();
-      const idx = state.db.themes.findIndex(x => x.id === themeId);
-      if (idx === -1) return;
-
-      const targetIdx = direction === 'up' ? idx - 1 : idx + 1;
-      if (targetIdx < 0 || targetIdx >= state.db.themes.length) return;
-
-      // Tukar posisi di array
-      const temp = state.db.themes[idx];
-      state.db.themes[idx] = state.db.themes[targetIdx];
-      state.db.themes[targetIdx] = temp;
-
-      // Perbarui nilai sort_order secara berurutan
-      state.db.themes.forEach((t, i) => {
-        t.sort_order = i + 1;
-      });
-
-      if (!IS_PREVIEW && supabase) {
-        await supabase.from('themes').upsert([
-          state.db.themes[idx],
-          state.db.themes[targetIdx]
-        ]);
-      }
-
-      persistLocalFallback();
-      renderLandingPage();
-      renderDashboard();
-      showToast('Urutan tampil tema berhasil diperbarui!');
     },
 
     async deleteThemeItem(id) {
