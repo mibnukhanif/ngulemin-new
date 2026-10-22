@@ -5,6 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NGULEMIN — Undangan Pernikahan Digital Elegan & Eksklusif</title>
   <meta name="theme-color" content="#C5A059" />
+  <meta name="description" content="NGULEMIN — layanan undangan pernikahan digital elegan, praktis, dan eksklusif." />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="NGULEMIN" />
+  <meta property="og:title" content="NGULEMIN — Undangan Pernikahan Digital Elegan & Eksklusif" />
+  <meta property="og:description" content="Temukan tema undangan pernikahan digital elegan dari NGULEMIN." />
+  <meta property="og:url" content="" />
+  <meta property="og:image" content="https://cdn-icons-png.flaticon.com/512/3656/3656836.png" />
+  <meta property="og:image:alt" content="Logo NGULEMIN" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="NGULEMIN — Undangan Pernikahan Digital Elegan & Eksklusif" />
+  <meta name="twitter:description" content="Temukan tema undangan pernikahan digital elegan dari NGULEMIN." />
+  <meta name="twitter:image" content="https://cdn-icons-png.flaticon.com/512/3656/3656836.png" />
+  <link id="dynamic-favicon" rel="icon" href="https://cdn-icons-png.flaticon.com/512/3656/3656836.png" />
 
   <!-- PWA Manifest via Data URI (1-File Standard) -->
   <link rel="manifest" href="data:application/manifest+json;utf8,%7B%22name%22%3A%22NGULEMIN%20-%20Undangan%20Pernikahan%20Digital%22%2C%22short_name%22%3A%22NGULEMIN%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23FAF8F5%22%2C%22theme_color%22%3A%22%23C5A059%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fcdn-icons-png.flaticon.com%2F512%2F3656%2F3656836.png%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fpng%22%7D%5D%7D" />
@@ -391,7 +404,7 @@
         </div>
 
         <!-- Themes Grid (Rasio Gambar 1:1 & Centered Flex) -->
-        <div id="themes-grid-container" class="flex flex-wrap justify-center gap-7 items-stretch"></div>
+        <div id="themes-grid-container" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-7 items-stretch"></div>
       </div>
     </section>
 
@@ -462,10 +475,10 @@
     <!-- FOOTER -->
     <footer class="bg-charcoal text-ivory pt-16 pb-10 px-4 sm:px-6 lg:px-8 mt-auto border-t-4 border-gold">
       <div class="max-w-7xl mx-auto">
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-ivory/15 text-center md:text-left">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-ivory/15 text-left">
           
           <!-- Kolom 1: Brand, Deskripsi & Media Sosial -->
-          <div class="md:col-span-5 space-y-4 flex flex-col items-center md:items-start">
+          <div class="md:col-span-5 space-y-4 flex flex-col items-start">
             <div class="flex items-center gap-3">
               <div id="footer-logo-wrapper" class="w-11 h-11 rounded-full gold-gradient flex items-center justify-center text-white overflow-hidden shrink-0 shadow-md">
                 <i class="fa-solid fa-rings-wedding text-lg"></i>
@@ -480,7 +493,7 @@
             </p>
             <div class="pt-1">
               <span class="text-[10px] uppercase tracking-widest text-gold-light font-semibold block mb-2.5">Ikuti Media Sosial Kami</span>
-              <div id="footer-socials-container" class="flex flex-wrap items-center justify-center md:justify-start gap-2.5"></div>
+              <div id="footer-socials-container" class="flex flex-wrap items-center justify-start gap-2.5"></div>
             </div>
           </div>
 
@@ -504,23 +517,23 @@
           </div>
 
           <!-- Kolom 3: Informasi Kontak -->
-          <div class="md:col-span-4 space-y-3 flex flex-col items-center md:items-start">
+          <div class="md:col-span-4 space-y-3 flex flex-col items-start">
             <h4 class="font-serif text-lg font-bold text-gold-light tracking-wide uppercase">Hubungi Kami</h4>
             <div class="space-y-2.5 text-xs sm:text-sm text-ivory/80">
-              <p class="flex items-center justify-center md:justify-start gap-2.5">
+              <p class="flex items-start justify-start gap-2.5">
                 <i class="fa-brands fa-whatsapp text-gold-light w-4 text-center"></i>
                 <span id="footer-wa-text">6281234567890</span>
               </p>
-              <p class="flex items-center justify-center md:justify-start gap-2.5">
+              <p class="flex items-start justify-start gap-2.5">
                 <i class="fa-regular fa-envelope text-gold-light w-4 text-center"></i>
                 <span id="footer-email-text">halo@ngulemin.com</span>
               </p>
-              <p class="flex items-center justify-center md:justify-start gap-2.5">
+              <p class="flex items-start justify-start gap-2.5">
                 <i class="fa-solid fa-location-dot text-gold-light w-4 text-center"></i>
                 <span id="footer-address-text">Tegal, Jawa Tengah, Indonesia</span>
               </p>
             </div>
-            <div class="pt-2 flex flex-wrap justify-center md:justify-start gap-2">
+            <div class="pt-2 flex flex-wrap justify-start gap-2">
               <button onclick="window.app.openOrderModal()" class="gold-gradient text-white px-5 py-2.5 rounded-full text-xs font-semibold shadow hover:opacity-95 transition-all inline-flex items-center gap-2">
                 <i class="fa-solid fa-paper-plane"></i>
                 <span>Pesan Undangan</span>
@@ -534,7 +547,7 @@
 
         </div>
 
-        <div class="pt-7 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-ivory/60 text-center sm:text-left">
+        <div class="pt-7 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs text-ivory/60 text-left">
           <p>&copy; <span id="footer-year"></span> <strong id="footer-copy-brand" class="text-ivory">NGULEMIN</strong>. Seluruh hak cipta dilindungi.</p>
           <p class="text-[11px] text-ivory/50">Dibuat dengan desain elegan untuk hari bahagia Anda.</p>
         </div>
@@ -1410,6 +1423,18 @@
   // RENDER LOGO OTOMATIS DI SEMUA TEMPAT
   const renderLogoElements = () => {
     const s = state.db.site_settings;
+    // Gunakan logo website yang sama untuk favicon dan metadata share.
+    const logoForMeta = (s.logo_url || 'https://cdn-icons-png.flaticon.com/512/3656/3656836.png').trim();
+    const favicon = document.getElementById('dynamic-favicon');
+    if (favicon) favicon.href = logoForMeta;
+    ['og:image', 'twitter:image'].forEach(key => {
+      let meta = document.querySelector(`meta[property="${key}"]`) || document.querySelector(`meta[name="${key}"]`);
+      if (meta) meta.setAttribute('content', logoForMeta);
+    });
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) ogTitle.setAttribute('content', `${s.brand_name || 'NGULEMIN'} — Undangan Pernikahan Digital Elegan & Eksklusif`);
+    const ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl && window.location.protocol.startsWith('http')) ogUrl.setAttribute('content', window.location.href.split('#')[0]);
     const wrappers = [
       'nav-logo-wrapper',
       'footer-logo-wrapper',
@@ -1494,7 +1519,7 @@
     }
 
     themesGrid.innerHTML = filteredThemes.map(t => `
-      <div class="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] max-w-sm glass-card rounded-3xl overflow-hidden flex flex-col justify-between group hover:-translate-y-1 transition-all duration-300">
+      <div class="w-full min-w-0 max-w-sm glass-card rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col justify-between group hover:-translate-y-1 transition-all duration-300">
         <div>
           <div class="relative aspect-square ratio-1-1 overflow-hidden bg-pearl">
             <img src="${t.image_url}" loading="lazy" alt="${t.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -1504,18 +1529,18 @@
             ${t.is_popular ? `<span class="absolute top-3 right-3 px-3 py-1 rounded-full gold-gradient text-white text-[10px] font-bold uppercase tracking-wider shadow"><i class="fa-solid fa-crown mr-1"></i> Terlaris</span>` : ''}
           </div>
 
-          <div class="p-5 pb-3">
+          <div class="p-3 sm:p-5 pb-2 sm:pb-3">
             <span class="text-[11px] text-gold-dark font-semibold uppercase tracking-wider">${t.category}</span>
-            <h3 class="font-serif text-2xl font-bold text-charcoal mt-0.5">${t.title}</h3>
+            <h3 class="font-serif text-base sm:text-2xl font-bold text-charcoal mt-0.5 break-words">${t.title}</h3>
           </div>
         </div>
 
-        <div class="p-5 pt-2 grid grid-cols-2 gap-2.5">
-          <a href="${t.preview_url || '#'}" target="_blank" rel="noopener noreferrer" class="py-2.5 px-4 rounded-xl border border-gold/50 bg-white hover:bg-gold/10 text-charcoal text-xs font-semibold flex items-center justify-center gap-1.5 transition-all">
+        <div class="p-3 sm:p-5 pt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <a href="${t.preview_url || '#'}" target="_blank" rel="noopener noreferrer" class="py-2 px-2 sm:py-2.5 sm:px-4 rounded-xl border border-gold/50 bg-white hover:bg-gold/10 text-charcoal text-xs font-semibold flex items-center justify-center gap-1.5 transition-all">
             <i class="fa-solid fa-up-right-from-square text-gold-dark"></i>
             <span>Preview</span>
           </a>
-          <button onclick="window.app.openOrderModal('${t.id}')" class="py-2.5 px-4 rounded-xl gold-gradient text-white text-xs font-semibold shadow hover:opacity-95 flex items-center justify-center gap-1.5 transition-all">
+          <button onclick="window.app.openOrderModal('${t.id}')" class="py-2 px-2 sm:py-2.5 sm:px-4 rounded-xl gold-gradient text-white text-xs font-semibold shadow hover:opacity-95 flex items-center justify-center gap-1.5 transition-all">
             <i class="fa-solid fa-paper-plane"></i>
             <span>Pesan</span>
           </button>
